@@ -1,4 +1,4 @@
-package main.java.GUI;
+package GUI;
 
 public class Controller {
 }
