@@ -4,10 +4,10 @@
 <?import javafx.scene.layout.*?>
 
 
-<AnchorPane fx:controller="Gui.Controller" prefHeight="151.0" prefWidth="605.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:controller="Gui.ControllerMainWindow" prefHeight="151.0" prefWidth="605.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Button fx:id="btnGenerateArticle" layoutX="106.0" layoutY="91.0" mnemonicParsing="false" onAction="#generateArticle" prefHeight="31.0" prefWidth="236.0" text="Artikel generieren" />
-        <Button fx:id="btnOpenConfig" layoutX="354.0" layoutY="91.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="236.0" text="Konfiguration ändern" />
+        <Button fx:id="btnOpenConfig" layoutX="354.0" layoutY="91.0" mnemonicParsing="false" onAction="#openConfig" prefHeight="31.0" prefWidth="236.0" text="Konfiguration ändern" />
         <Label layoutX="26.0" layoutY="46.0" text="Keywords" />
         <TextField fx:id="txtFieldKeywords" layoutX="106.0" layoutY="41.0" prefHeight="31.0" prefWidth="484.0" />
     </children>
