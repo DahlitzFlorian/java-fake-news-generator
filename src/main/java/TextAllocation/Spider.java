@@ -1,5 +1,8 @@
 package TextAllocation;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,34 +35,38 @@ public class Spider {
 
     /**
      *
-     * @param url
+     * @param baseUrl
      * @param searchWord
      */
-    public void search(String url, String searchWord) {
+    public JsonObject search(String baseUrl, List<String> keywords) {
+
+        JsonObjectBuilder articles = Json.createObjectBuilder();
 
         while(this.pagesVisited.size() < MAX_PAGES) {
             String currentUrl;
             Crawler crawler = new Crawler();
 
             if(this.pagesToVisit.isEmpty()) {
-                currentUrl = url;
-                this.pagesVisited.add(url);
+                currentUrl = baseUrl;
+                this.pagesVisited.add(baseUrl);
             }
             else {
                 currentUrl = this.getNextUrl();
             }
 
             crawler.crawl(currentUrl);
-            boolean success = crawler.searchForWord(searchWord);
+            boolean success = crawler.searchForWord(keywords);
 
             if(success) {
                 System.out.println(String.format("**Success** Word %s found at %s", searchWord, currentUrl));
-                break;
+                //break;
             }
 
             this.pagesToVisit.addAll(crawler.getLinks());
         }
 
         System.out.println(String.format("**Done** Visited %s web page(s)", this.pagesVisited.size()));
+
+        return articles.build();
     }
 }
