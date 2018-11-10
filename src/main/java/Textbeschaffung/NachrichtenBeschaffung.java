@@ -5,3 +5,5 @@ public interface NachrichtenBeschaffung {
      String artikelCutter(String artikel);
      JSONObject artikelJSONBuilder(JSONObject artikelJson, String News, String titel);
 }
+
+//Created and edited by Fichte

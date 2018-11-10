@@ -82,3 +82,4 @@ public class Textbeschaffung implements NachrichtenBeschaffung{
         return artikelJson;
     }
 }
+    //Created and edited by Fichte

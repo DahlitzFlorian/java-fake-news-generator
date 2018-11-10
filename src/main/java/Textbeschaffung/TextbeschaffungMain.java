@@ -5,3 +5,4 @@ public class TextbeschaffungMain {
        Test.artikelBeschaffung(key);
     }
 }
+//Created and edited by Fichte
