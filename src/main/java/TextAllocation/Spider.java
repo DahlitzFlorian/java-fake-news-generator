@@ -36,7 +36,7 @@ public class Spider {
     /**
      *
      * @param baseUrl
-     * @param searchWord
+     * @param keywords
      */
     public JsonObject search(String baseUrl, List<String> keywords) {
 
@@ -56,11 +56,6 @@ public class Spider {
 
             crawler.crawl(currentUrl);
             boolean success = crawler.searchForWord(keywords);
-
-            if(success) {
-                System.out.println(String.format("**Success** Word %s found at %s", searchWord, currentUrl));
-                //break;
-            }
 
             this.pagesToVisit.addAll(crawler.getLinks());
         }
