@@ -47,16 +47,19 @@ public class Crawler {
     }
 
     // Tries to find a word on the page
-    public boolean searchForWord(String searchWord) {
+    public boolean searchForWord(List<String> keywords) {
         if(this.htmlDocument == null) {
             System.out.println("ERROR! Call crawl() before performing analysis on the document");
             return false;
         }
 
-        System.out.println("Searching for the word " + searchWord + "...");
         String bodyText = this.htmlDocument.body().text();
 
-        return bodyText.toLowerCase().contains(searchWord.toLowerCase());
+        for(String keyword : keywords)
+            if(!bodyText.toLowerCase().contains(keyword.toLowerCase()))
+                return false;
+
+        return true;
     }
 
     // Returns a list of all the URLs on the page
