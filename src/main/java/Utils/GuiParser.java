@@ -22,7 +22,7 @@ public class GuiParser {
     }
 
     public static String parseTextField(TextField textField, String txtFieldName, String regex) throws InputFieldEmptyException, InvalidInputException {
-        String input = textField.getText().trim().substring(0,5);
+        String input = textField.getText().trim();
 
         if (input.isEmpty()) {
             throw new InputFieldEmptyException(txtFieldName);
