@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import Utils.Popups;
+import javafx.stage.Stage;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -46,6 +47,8 @@ public class ControllerConfiguration {
             try (FileWriter file = new FileWriter("config.json")) {
                 file.write(configJson.toString());
                 log.info("Konfiguration erfolgreich gespeichert!");
+                Stage config = (Stage) btnSaveConfig.getScene().getWindow();
+                config.close();
             } catch (IOException e) {
                 Popups.createPopup(Alert.AlertType.ERROR, e.getMessage(), "Konnte nicht auf Datei zugreifen");
             }
@@ -76,7 +79,7 @@ public class ControllerConfiguration {
 
         if (validData) {
             //TODO let user know only first 3 chars are read or limit textfield
-            int minWords = minWordsString.length() > 3 ? Integer.parseInt(minWordsString.substring(0, 3)) : Integer.parseInt(minWordsString.substring(0, 3));
+            int minWords = minWordsString.length() > 3 ? Integer.parseInt(minWordsString.substring(0, 3)) : Integer.parseInt(minWordsString);
             int maxWords = maxWordsString.length() > 3 ? Integer.parseInt(maxWordsString.substring(0, 3)) : Integer.parseInt(maxWordsString);
             if (maxWords - minWords <= 0) {
                 Popups.createPopup(Alert.AlertType.ERROR, "Max. Wörter muss größer sein als Min. Wörter!", "Ungültige Eingabe");
