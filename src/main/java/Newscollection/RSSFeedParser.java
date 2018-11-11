@@ -41,7 +41,7 @@ public class RSSFeedParser implements RSSFeedParserInterface {
                     if (news.contains(keyword) == true) {
                         RSSFeedParser JSONbuilder = new RSSFeedParser();
                         articleJSON = JSONbuilder.articleJSONBuilder(articleJSON, news, headline); //Call method to build return JSON
-                        System.out.print("Array is" + articleJSON);
+                        System.out.print("Array is " + articleJSON);
                     }
 
                 }
