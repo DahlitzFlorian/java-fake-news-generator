@@ -2,6 +2,9 @@
 # Created by https://www.gitignore.io/api/git,maven,eclipse,intellij,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=git,maven,eclipse,intellij,visualstudiocode
 
+### Local Stuff ###
+config.json
+
 ### Eclipse ###
 
 .metadata
@@ -161,7 +164,7 @@ fabric.properties
 
 # *.iml
 # modules.xml
-# .idea/misc.xml
+# .idea/Utils.xml
 # *.ipr
 
 # Sonarlint plugin
