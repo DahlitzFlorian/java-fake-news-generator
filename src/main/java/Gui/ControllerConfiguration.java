@@ -58,13 +58,14 @@ public class ControllerConfiguration {
     }
 
     private JsonObject generateJson() {
-        //TODO What to do with the sources from textarea?
         String maxWordsString = null;
         String minWordsString = null;
+        String[] sources = null;
         boolean validData = true;
         JsonObject result;
 
         try {
+            sources = GuiParser.parseTextArea(txtAreaNewsSources);
             maxWordsString = GuiParser.parseTextField(txtFieldMaxWordCount, "Max Wörter", "\\d*");
             minWordsString = GuiParser.parseTextField(txtFieldMinWordCount, "Min. Wörter", "\\d*");
         } catch (InputFieldEmptyException | InvalidInputException e) {
@@ -74,7 +75,6 @@ public class ControllerConfiguration {
         }
 
         if (validData) {
-            //TODO let user know only first 3 chars are read or limit textfield
             int minWords = minWordsString.length() > 3 ? Integer.parseInt(minWordsString.substring(0, 3)) : Integer.parseInt(minWordsString);
             int maxWords = maxWordsString.length() > 3 ? Integer.parseInt(maxWordsString.substring(0, 3)) : Integer.parseInt(maxWordsString);
             if (maxWords - minWords <= 0) {
@@ -87,6 +87,8 @@ public class ControllerConfiguration {
                     .add("min", minWords)
                     .add("max", maxWords)
                     .add("min_distance", 50)
+                    .add("sources" ,Json.createArrayBuilder()
+                            .add(String.join("\",\"", sources)))
                     .build();
             log.info(result.toString());
             return result;
@@ -94,6 +96,4 @@ public class ControllerConfiguration {
             return null;
         }
     }
-
-
 }
