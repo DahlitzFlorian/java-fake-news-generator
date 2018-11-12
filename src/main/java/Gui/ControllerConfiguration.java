@@ -67,11 +67,7 @@ public class ControllerConfiguration {
         try {
             maxWordsString = GuiParser.parseTextField(txtFieldMaxWordCount, "Max Wörter", "\\d*");
             minWordsString = GuiParser.parseTextField(txtFieldMinWordCount, "Min. Wörter", "\\d*");
-        } catch (InputFieldEmptyException e) {
-            Popups.createPopup(Alert.AlertType.ERROR, e.getMessage(), "Eingabe leer!");
-            log.severe(e.getMessage());
-            validData = false;
-        } catch (InvalidInputException e) {
+        } catch (InputFieldEmptyException | InvalidInputException e) {
             Popups.createPopup(Alert.AlertType.ERROR, e.getMessage(), "Eingabe ungültig!");
             log.severe(e.getMessage());
             validData = false;
