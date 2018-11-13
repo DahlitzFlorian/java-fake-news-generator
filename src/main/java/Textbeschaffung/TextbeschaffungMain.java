@@ -1,8 +1,10 @@
+package Textbeschaffung;
+
 public class TextbeschaffungMain {
-    public static void main(String[] args) {
-        String key = "Jahr";
-      Textbeschaffung Test = new Textbeschaffung();
-       Test.artikelBeschaffung(key);
-    }
+	public static void main(String[] args) {
+		String key = "Jahr";
+		Textbeschaffung Test = new Textbeschaffung();
+		Test.artikelBeschaffung(key);
+	}
 }
-//Created and edited by Fichte
+// Created and edited by Fichte
