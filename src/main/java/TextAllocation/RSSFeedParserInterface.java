@@ -1,9 +1,10 @@
 package TextAllocation;
 
-import org.json.JSONObject;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 public interface RSSFeedParserInterface {
-    public JSONObject articleCollector(String keyword);
+    public JsonObject articleCollector(String keyword);
     public String articleCutter(String article);
-    public JSONObject articleJSONBuilder(JSONObject articleJson, String News, String title);
+    public JsonObjectBuilder articleJSONBuilder(JsonObjectBuilder articleJson, String News, String title);
 }

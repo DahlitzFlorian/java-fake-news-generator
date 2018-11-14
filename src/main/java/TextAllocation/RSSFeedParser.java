@@ -7,8 +7,11 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.io.XmlReader;
-//import org.json.JSONObject;
-import org.json.*;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 /*
 Class for text creation. The input parameter is a keyword. The artikelBeschaffung method searches in the given rss feeds for news which are containing the keyword.
@@ -18,8 +21,8 @@ Class for text creation. The input parameter is a keyword. The artikelBeschaffun
 public class RSSFeedParser implements RSSFeedParserInterface {
 
 
-    public JSONObject articleCollector(String keyword) {
-        JSONObject articleJSON = new JSONObject();
+    public JsonObject articleCollector(String keyword) {
+        JsonObjectBuilder articleJSON = Json.createObjectBuilder();
         ArrayList<String> urls = new ArrayList<String>();
         urls.add("https://www.freefullrss.com/feed.php?url=http%3A%2F%2Fwww.spiegel.de%2Fwirtschaft%2Findex.rss&max=10&links=preserve&exc=&submit=Create+Full+Text+RSS");
         urls.add("https://www.freefullrss.com/feed.php?url=http%3A%2F%2Fwww.tagesschau.de%2Fxml%2Frss2&max=5&links=preserve&exc=&submit=Create+Full+Text+RSS");
@@ -41,7 +44,7 @@ public class RSSFeedParser implements RSSFeedParserInterface {
 
                     if (news.contains(keyword) == true) {
                         RSSFeedParser JSONbuilder = new RSSFeedParser();
-                        articleJSON = JSONbuilder.articleJSONBuilder(articleJSON, news, headline); //Call method to build return JSON
+                        articleJSON = this.articleJSONBuilder(articleJSON, news, headline); //Call method to build return JSON
                         System.out.print("Array is " + articleJSON);
                     }
 
@@ -55,7 +58,7 @@ public class RSSFeedParser implements RSSFeedParserInterface {
 
 
         }
-        return articleJSON;
+        return articleJSON.build();
     }
 
     public String articleCutter(String article){ //class to cut the meta information from the reference articles
@@ -64,18 +67,18 @@ public class RSSFeedParser implements RSSFeedParserInterface {
         return article;
     }
 
-    public JSONObject articleJSONBuilder(JSONObject articleJson, String News, String title){ // Input are a JSON article, the news, and the headline
+    public JsonObjectBuilder articleJSONBuilder(JsonObjectBuilder articleJson, String News, String title){ // Input are a JSON article, the news, and the headline
         RSSFeedParser cutter = new RSSFeedParser();
         News = cutter.articleCutter(News); // first cutting out all meta information
-        articleJson.put("ressource", News); //each reference article is a ressource
-        articleJson.put("title", title);
-        JSONObject paragraphObject = new JSONObject();
-        JSONArray paragraphArray = new JSONArray();
-        JSONArray  tags = new JSONArray(); //empty JSON array for tags
-        paragraphObject.put("tags", tags); //tags are added in the Textanalyse
-        paragraphObject.put("content", "");
-        paragraphArray.put(paragraphObject);
-        articleJson.put( "paragraph", paragraphArray);
+        articleJson.add("ressource", News); //each reference article is a ressource
+        articleJson.add("title", title);
+        JsonObjectBuilder paragraphObject = Json.createObjectBuilder();
+        JsonArrayBuilder paragraphArray = Json.createArrayBuilder();
+        JsonArrayBuilder  tags = Json.createArrayBuilder(); //empty JSON array for tags
+        paragraphObject.add("tags", tags); //tags are added in the Textanalyse
+        paragraphObject.add("content", "");
+        paragraphArray.add(paragraphObject);
+        articleJson.add( "paragraph", paragraphArray);
         return articleJson;
     }
 }
