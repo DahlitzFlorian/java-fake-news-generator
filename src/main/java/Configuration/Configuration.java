@@ -20,17 +20,11 @@ public class Configuration {
         return config.getJsonArray("sources").getValuesAs(JsonValue::toString);
     }
 
-    public JsonObject getTextConfigurations() {
-        JsonObject result = Json.createObjectBuilder().build();
-
-        try {
-            String text = new String(Files.readAllBytes(Paths.get(CONFIG_PATH)), StandardCharsets.UTF_8);
-            JsonReader jsonReader = Json.createReader(new StringReader(text));
-            result = jsonReader.readObject();
-            jsonReader.close();
-        } catch (java.io.IOException e) {
-            System.err.println("Error: " + e.getMessage());
-        }
+    public JsonObject getTextConfigurations() throws IOException {
+        String text = new String(Files.readAllBytes(Paths.get(CONFIG_PATH)), StandardCharsets.UTF_8);
+        JsonReader jsonReader = Json.createReader(new StringReader(text));
+        JsonObject result = jsonReader.readObject();
+        jsonReader.close();
 
         return result;
     }

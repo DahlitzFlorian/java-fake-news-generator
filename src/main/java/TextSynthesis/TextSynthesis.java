@@ -4,8 +4,10 @@ import Configuration.Configuration;
 import TextAllocation.TextAllocation;
 import TextClassification.TextClassification;
 
+import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import java.io.IOException;
 import java.util.List;
 
 public class TextSynthesis {
@@ -14,7 +16,15 @@ public class TextSynthesis {
         String statusCode = "Status: 200 - Successful.";
 
         Configuration config = new Configuration();
-        JsonObject textConfig = config.getTextConfigurations();
+        JsonObject textConfig = null;
+
+        try {
+            textConfig = config.getTextConfigurations();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return "Status: 3000 - Failed to load configuration.";
+        }
+
         List<String> sources = config.getSources(textConfig);
 
         TextAllocation textAllocation = new TextAllocation();
