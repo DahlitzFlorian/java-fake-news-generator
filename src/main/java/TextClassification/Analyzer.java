@@ -1,4 +1,4 @@
-package Analyzer;
+package TextClassification;
 
 import javax.json.JsonArray;
 

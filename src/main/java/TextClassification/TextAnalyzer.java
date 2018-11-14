@@ -1,10 +1,9 @@
-package Analyzer;
+package TextClassification;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -17,7 +16,7 @@ import javax.json.JsonReader;
  * @author Huber
  */
 
-public class TextAnalyzer implements Analyzer {
+class TextAnalyzer implements Analyzer {
 	JsonArray mJsonArray;
 
 	public int getEmptyParagraphs(String words[]) {
