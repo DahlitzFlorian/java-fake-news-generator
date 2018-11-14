@@ -20,35 +20,34 @@ Class for text creation. The input parameter is a keyword. The artikelBeschaffun
 */
 class RSSFeedParser implements RSSFeedParserInterface {
 
-    public JsonObject articleCollector(String keyword) {
+    public JsonObject articleCollector(String source, List<String> keywords) {
         JsonObjectBuilder articleJSON = Json.createObjectBuilder();
-        ArrayList<String> urls = new ArrayList<String>();
-        urls.add("https://www.freefullrss.com/feed.php?url=http%3A%2F%2Fwww.spiegel.de%2Fwirtschaft%2Findex.rss&max=10&links=preserve&exc=&submit=Create+Full+Text+RSS");
-        urls.add("https://www.freefullrss.com/feed.php?url=http%3A%2F%2Fwww.tagesschau.de%2Fxml%2Frss2&max=5&links=preserve&exc=&submit=Create+Full+Text+RSS");
-        urls.add("https://www.freefullrss.com/feed.php?url=http%3A%2F%2Frss.sueddeutsche.de%2Frss%2FTopthemen&max=5&links=preserve&exc=&submit=Create+Full+Text+RSS");
 
         String news;
         String headline;
 
-        for(Iterator u = urls.iterator(); u.hasNext();) {
-            try {
-                URL feedUrl = new URL(u.next().toString());
-                SyndFeedInput feedInput = new SyndFeedInput(); //create a Feed input
-                SyndFeed newsFeed = feedInput.build(new XmlReader(feedUrl)); //Build reader for the RSSFeed
+        try {
+            URL feedUrl = new URL(source);
+            SyndFeedInput feedInput = new SyndFeedInput(); //create a Feed input
+            SyndFeed newsFeed = feedInput.build(new XmlReader(feedUrl)); //Build reader for the RSSFeed
 
-                for(Iterator i = newsFeed.getEntries().iterator(); i.hasNext(); ) {
-                    SyndEntry referenceArticle = (SyndEntry) i.next(); //Every Feed entry is one Article
-                    news = referenceArticle.getDescription().toString(); //Receiving the reference article
-                    headline = referenceArticle.getTitle(); //Receiving the headling
+            for(SyndEntry feedEntry : newsFeed.getEntries()) {
+                news = feedEntry.getDescription().toString(); //Receiving the reference article
+                headline = feedEntry.getTitle(); //Receiving the headling
 
-                    if(news.contains(keyword)) {
-                        articleJSON = this.articleJSONBuilder(articleJSON, news, headline); //Call method to build return JSON
-                        System.out.print("Array is " + articleJSON.build().toString());
+                boolean containsAll = true;
+                for(String keyword : keywords) {
+                    if (!news.contains(keyword)) {
+                        containsAll = false;
+                        break;
                     }
                 }
-            } catch (Exception e) {
-                System.out.println("Error" + e.getMessage());
+
+                if(containsAll)
+                    articleJSON = this.articleJSONBuilder(articleJSON, news, headline); //Call method to build return JSON
             }
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
         }
 
         return articleJSON.build();
