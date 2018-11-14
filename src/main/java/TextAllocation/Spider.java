@@ -64,4 +64,13 @@ public class Spider {
 
         return articles.build();
     }
+
+    public static void main(String args[]) {
+        Spider spider = new Spider();
+        List<String> keywords = new LinkedList<String>();
+        keywords.add("politik");
+        keywords.add("deutschland");
+        keywords.add("frankreich");
+        spider.search("http://www.spiegel.de/", keywords);
+    }
 }

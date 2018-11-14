@@ -6,6 +6,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.nodes.Document;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,7 +55,18 @@ public class Crawler {
             return false;
         }
 
-        String bodyText = this.htmlDocument.body().text();
+        String bodyText = this.htmlDocument.
+
+        try {
+            String path = getClass().getClassLoader().getResource("log").getPath().replaceFirst("/", "") + "/some.html";
+            FileWriter fw = new FileWriter(path);
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            bw.write(bodyText);
+            bw.close();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
 
         for(String keyword : keywords)
             if(!bodyText.toLowerCase().contains(keyword.toLowerCase()))
