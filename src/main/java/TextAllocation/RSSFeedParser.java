@@ -22,7 +22,7 @@ Class for text creation. The input parameter is a keyword. The artikelBeschaffun
 class RSSFeedParser implements RSSFeedParserInterface {
 
     public JsonArray articleCollector(String source, List<String> keywords) {
-        JsonArrayBuilder articleJSON = Json.createArrayBuilder();
+        JsonArrayBuilder articles = Json.createArrayBuilder();
 
         String news;
         String headline;
@@ -45,13 +45,13 @@ class RSSFeedParser implements RSSFeedParserInterface {
                 }
 
                 if(containsAll)
-                    articleJSON.add(this.articleJSONBuilder(news, headline)); //Call method to build return JSON
+                    articles.add(this.articleBuilder(news, headline)); //Call method to build return JSON
             }
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
         }
 
-        return articleJSON.build();
+        return articles.build();
     }
 
     private String articleCutter(String article) { //class to cut the meta information from the reference articles
@@ -61,7 +61,7 @@ class RSSFeedParser implements RSSFeedParserInterface {
         return article;
     }
 
-    private JsonObject articleJSONBuilder(String news, String title) { // Input are a JSON article, the news, and the headline
+    private JsonObject articleBuilder(String news, String title) { // Input are a JSON article, the news, and the headline
         JsonObjectBuilder article = Json.createObjectBuilder();
 
         JsonObjectBuilder paragraphObject = Json.createObjectBuilder();
