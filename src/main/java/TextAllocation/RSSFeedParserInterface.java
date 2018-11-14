@@ -1,8 +1,9 @@
 package TextAllocation;
 
-import javax.json.JsonObject;
+import javax.json.JsonArray;
+import java.util.List;
 
 public interface RSSFeedParserInterface {
 
-    JsonObject articleCollector(String keyword);
+    JsonArray articleCollector(String source, List<String> keywords);
 }

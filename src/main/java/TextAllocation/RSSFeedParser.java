@@ -8,9 +8,10 @@ import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.io.XmlReader;
 
-import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonArray;
+import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
 /*
@@ -20,8 +21,8 @@ Class for text creation. The input parameter is a keyword. The artikelBeschaffun
 */
 class RSSFeedParser implements RSSFeedParserInterface {
 
-    public JsonObject articleCollector(String source, List<String> keywords) {
-        JsonObjectBuilder articleJSON = Json.createObjectBuilder();
+    public JsonArray articleCollector(String source, List<String> keywords) {
+        JsonArrayBuilder articleJSON = Json.createArrayBuilder();
 
         String news;
         String headline;
@@ -44,7 +45,7 @@ class RSSFeedParser implements RSSFeedParserInterface {
                 }
 
                 if(containsAll)
-                    articleJSON = this.articleJSONBuilder(articleJSON, news, headline); //Call method to build return JSON
+                    articleJSON.add(this.articleJSONBuilder(news, headline)); //Call method to build return JSON
             }
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
@@ -60,22 +61,22 @@ class RSSFeedParser implements RSSFeedParserInterface {
         return article;
     }
 
-    private JsonObjectBuilder articleJSONBuilder(JsonObjectBuilder articleJson, String news, String title) { // Input are a JSON article, the news, and the headline
-        RSSFeedParser cutter = new RSSFeedParser();
+    private JsonObject articleJSONBuilder(String news, String title) { // Input are a JSON article, the news, and the headline
+        JsonObjectBuilder article = Json.createObjectBuilder();
 
         JsonObjectBuilder paragraphObject = Json.createObjectBuilder();
         JsonArrayBuilder paragraphArray = Json.createArrayBuilder();
         JsonArrayBuilder  tags = Json.createArrayBuilder(); //empty JSON array for tags
 
-        news = cutter.articleCutter(news); // first cutting out all meta information
-        paragraphObject.add("tags", tags); //tags are added in the Textanalyse
+        news = this.articleCutter(news); // first cutting out all meta information
+        paragraphObject.add("tags", tags.build()); //tags are added in the Textanalyse
         paragraphObject.add("content", "");
-        paragraphArray.add(paragraphObject);
+        paragraphArray.add(paragraphObject.build());
 
-        articleJson.add("ressource", news); //each reference article is a ressource
-        articleJson.add("title", title);
-        articleJson.add( "paragraph", paragraphArray);
+        article.add("resource", news); //each reference article is a ressource
+        article.add("title", title);
+        article.add( "paragraph", paragraphArray.build());
 
-        return articleJson;
+        return article.build();
     }
 }
