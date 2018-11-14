@@ -13,7 +13,10 @@ import java.util.List;
 public class TextSynthesis {
 
     public String createArticle(List<String> keywords) {
-        String statusCode = "Status: 200 - Successful.";
+        String[] statuscodes = {
+                "Status: 2000 - Successful.",
+                "Status: 3000 - Failed to load configuration."
+        };
 
         Configuration config = new Configuration();
         JsonObject textConfig = null;
@@ -22,7 +25,7 @@ public class TextSynthesis {
             textConfig = config.getTextConfigurations();
         } catch (IOException ioe) {
             ioe.printStackTrace();
-            return "Status: 3000 - Failed to load configuration.";
+            return statuscodes[1];
         }
 
         List<String> sources = config.getSources(textConfig);
@@ -36,7 +39,7 @@ public class TextSynthesis {
         String article = this.synthesise(analysedTexts);
         this.save(article);
 
-        return statusCode;
+        return statuscodes[0];
     }
 
     private String synthesise(JsonArray analyzedTexts) { return ""; }
