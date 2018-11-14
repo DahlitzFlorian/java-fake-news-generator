@@ -18,7 +18,7 @@ Class for text creation. The input parameter is a keyword. The artikelBeschaffun
 
 
 */
-public class RSSFeedParser implements RSSFeedParserInterface {
+class RSSFeedParser implements RSSFeedParserInterface {
 
 
     public JsonObject articleCollector(String keyword) {
@@ -45,7 +45,7 @@ public class RSSFeedParser implements RSSFeedParserInterface {
                     if (news.contains(keyword) == true) {
                         RSSFeedParser JSONbuilder = new RSSFeedParser();
                         articleJSON = this.articleJSONBuilder(articleJSON, news, headline); //Call method to build return JSON
-                        System.out.print("Array is " + articleJSON);
+                        System.out.print("Array is " + articleJSON.build().toString());
                     }
 
                 }
@@ -61,13 +61,13 @@ public class RSSFeedParser implements RSSFeedParserInterface {
         return articleJSON.build();
     }
 
-    public String articleCutter(String article){ //class to cut the meta information from the reference articles
+    private String articleCutter(String article){ //class to cut the meta information from the reference articles
         article = article.replaceAll("SyndContentImpl.*" , "");
         article = article.replaceAll("\\<.*?>","");
         return article;
     }
 
-    public JsonObjectBuilder articleJSONBuilder(JsonObjectBuilder articleJson, String News, String title){ // Input are a JSON article, the news, and the headline
+    private JsonObjectBuilder articleJSONBuilder(JsonObjectBuilder articleJson, String News, String title){ // Input are a JSON article, the news, and the headline
         RSSFeedParser cutter = new RSSFeedParser();
         News = cutter.articleCutter(News); // first cutting out all meta information
         articleJson.add("ressource", News); //each reference article is a ressource
