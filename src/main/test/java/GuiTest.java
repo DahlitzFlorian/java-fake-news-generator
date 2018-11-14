@@ -6,6 +6,5 @@ public class GuiTest {
     @Test
     public void gui() {
         assertEquals(1,1);
-
     }
 }
