@@ -1,0 +1,9 @@
+.text-field:error {
+    -fx-text-box-border: red ;
+    -fx-focus-color: red ;
+}
+
+.text-area:error {
+    -fx-border-color: red;
+    -fx-focus-color: red;
+}
