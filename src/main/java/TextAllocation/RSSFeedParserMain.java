@@ -1,3 +1,5 @@
+package TextAllocation;
+
 public class RSSFeedParserMain {
     public static void main(String[] args) {
         String key = "Jahr";

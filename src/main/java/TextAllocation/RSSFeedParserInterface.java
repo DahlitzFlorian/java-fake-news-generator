@@ -1,3 +1,5 @@
+package TextAllocation;
+
 import org.json.JSONObject;
 
 public interface RSSFeedParserInterface {
