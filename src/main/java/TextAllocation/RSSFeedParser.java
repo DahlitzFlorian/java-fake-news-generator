@@ -20,7 +20,6 @@ Class for text creation. The input parameter is a keyword. The artikelBeschaffun
 */
 class RSSFeedParser implements RSSFeedParserInterface {
 
-
     public JsonObject articleCollector(String keyword) {
         JsonObjectBuilder articleJSON = Json.createObjectBuilder();
         ArrayList<String> urls = new ArrayList<String>();
@@ -30,55 +29,54 @@ class RSSFeedParser implements RSSFeedParserInterface {
 
         String news;
         String headline;
-        for (Iterator u = urls.iterator(); u.hasNext();) {
+
+        for(Iterator u = urls.iterator(); u.hasNext();) {
             try {
-
                 URL feedUrl = new URL(u.next().toString());
-                SyndFeedInput feedinput = new SyndFeedInput(); //create a Feed input
-                SyndFeed newsFeed = feedinput.build(new XmlReader(feedUrl)); //Build reader for the RSSFeed
+                SyndFeedInput feedInput = new SyndFeedInput(); //create a Feed input
+                SyndFeed newsFeed = feedInput.build(new XmlReader(feedUrl)); //Build reader for the RSSFeed
 
-                for (Iterator i = newsFeed.getEntries().iterator(); i.hasNext(); ) {
+                for(Iterator i = newsFeed.getEntries().iterator(); i.hasNext(); ) {
                     SyndEntry referenceArticle = (SyndEntry) i.next(); //Every Feed entry is one Article
                     news = referenceArticle.getDescription().toString(); //Receiving the reference article
-                    headline = referenceArticle.getTitle().toString(); //Receiving the headling
+                    headline = referenceArticle.getTitle(); //Receiving the headling
 
-                    if (news.contains(keyword) == true) {
-                        RSSFeedParser JSONbuilder = new RSSFeedParser();
+                    if(news.contains(keyword)) {
                         articleJSON = this.articleJSONBuilder(articleJSON, news, headline); //Call method to build return JSON
                         System.out.print("Array is " + articleJSON.build().toString());
                     }
-
                 }
-
-
             } catch (Exception e) {
                 System.out.println("Error" + e.getMessage());
             }
-
-
-
         }
+
         return articleJSON.build();
     }
 
-    private String articleCutter(String article){ //class to cut the meta information from the reference articles
+    private String articleCutter(String article) { //class to cut the meta information from the reference articles
         article = article.replaceAll("SyndContentImpl.*" , "");
         article = article.replaceAll("\\<.*?>","");
+
         return article;
     }
 
-    private JsonObjectBuilder articleJSONBuilder(JsonObjectBuilder articleJson, String News, String title){ // Input are a JSON article, the news, and the headline
+    private JsonObjectBuilder articleJSONBuilder(JsonObjectBuilder articleJson, String news, String title) { // Input are a JSON article, the news, and the headline
         RSSFeedParser cutter = new RSSFeedParser();
-        News = cutter.articleCutter(News); // first cutting out all meta information
-        articleJson.add("ressource", News); //each reference article is a ressource
-        articleJson.add("title", title);
+
         JsonObjectBuilder paragraphObject = Json.createObjectBuilder();
         JsonArrayBuilder paragraphArray = Json.createArrayBuilder();
         JsonArrayBuilder  tags = Json.createArrayBuilder(); //empty JSON array for tags
+
+        news = cutter.articleCutter(news); // first cutting out all meta information
         paragraphObject.add("tags", tags); //tags are added in the Textanalyse
         paragraphObject.add("content", "");
         paragraphArray.add(paragraphObject);
+
+        articleJson.add("ressource", news); //each reference article is a ressource
+        articleJson.add("title", title);
         articleJson.add( "paragraph", paragraphArray);
+
         return articleJson;
     }
 }
