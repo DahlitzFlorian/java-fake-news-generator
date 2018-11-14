@@ -11,7 +11,7 @@ public class TextAllocation {
             if(this.feedExists(source)) {
                 FeedParser feedParser = new FeedParser();
                 String feedUrl = this.getFeedUrl(source);
-                for(JsonValue value : feedParser.getTexts(feedUrl)) {
+                for(JsonValue value : feedParser.getTexts(feedUrl, keywords)) {
                     JsonObject text = (JsonObject) value;
                     texts.add(text);
                 }
