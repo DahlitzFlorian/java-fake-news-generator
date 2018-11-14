@@ -19,9 +19,9 @@ Class for text creation. The input parameter is a keyword. The artikelBeschaffun
 
 
 */
-class RSSFeedParser implements RSSFeedParserInterface {
+class FeedParser implements FeedParserInterface {
 
-    public JsonArray articleCollector(String source, List<String> keywords) {
+    public JsonArray getTexts(String source, List<String> keywords) {
         JsonArrayBuilder articles = Json.createArrayBuilder();
 
         String news;
