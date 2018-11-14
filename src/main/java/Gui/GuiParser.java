@@ -12,39 +12,33 @@ import java.util.List;
 /**
  * Class providing methods to parse Textfields and Textareas
  *
- * @author Tim Leuschner
+ * @author Leuschner
  */
 
- class GuiParser {
+class GuiParser {
 
     private Notifications notifications = new Notifications();
 
-     GuiParser() {
-
-    }
-
-     String parseTextField(TextField textField, String txtFieldName, String regex) {
-        String input = textField.getText().trim();
+    String parseTextField(TextField textField, String txtFieldName) {
+        String input = textField.getText();
 
         if (input.isEmpty()) {
-            notifications.addError(textField, "Das Eingabefeld " + txtFieldName + " muss ausgefüllt werden!");
-        } else if (!input.matches(regex)) {
-            notifications.addError(textField, "Fehlerhafte Eingabe in " + txtFieldName + "!");
+            notifications.addError(textField, "Das Eingabefeld " + txtFieldName + " muss ausgefüllt werden!\n");
         }
         return input;
     }
 
-     List<String> parseTextArea(TextArea textArea) {
+    List<String> parseTextArea(TextArea textArea) {
         String input = textArea.getText().replaceAll("\\s", "");
 
         if (input.isEmpty()) {
-            notifications.addError(textArea, "Das Eingabefeld Quellen muss ausgefüllt werden!");
+            notifications.addError(textArea, "Das Eingabefeld Quellen muss ausgefüllt werden!\n");
         }
 
         return new ArrayList<>(Arrays.asList(input.split(",")));
     }
 
-     Notifications getNotifications() {
+    Notifications getNotifications() {
         return notifications;
     }
 }

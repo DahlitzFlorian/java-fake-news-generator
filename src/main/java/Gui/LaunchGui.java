@@ -18,7 +18,9 @@ public class LaunchGui extends Application {
         try {
             Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fakenews.fxml"));
             primaryStage.setTitle("Fake News Generator 2000 und 1");
-            primaryStage.setScene(new Scene(root, 605, 151));
+            Scene scene = new Scene(root, 605, 151);
+            scene.getStylesheets().add(getClass().getClassLoader().getResource("errors.css").toExternalForm());
+            primaryStage.setScene(scene);
             primaryStage.setResizable(false);
             primaryStage.show();
         } catch (IOException e) {
