@@ -13,6 +13,9 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * @author Huber
+ */
 public class ImageAllocation {
 
 	public void getImage(String url, String directoryFinal)
