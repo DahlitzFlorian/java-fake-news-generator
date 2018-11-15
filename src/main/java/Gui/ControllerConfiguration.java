@@ -127,7 +127,7 @@ public class ControllerConfiguration implements Initializable {
             if (minWords < 50 || minWords > 750 - distance)
                 parser.getNotifications().addError(txtFieldMinWordCount, "Min. Wörter muss zwischen 50 und " + (750 - distance) + " sein!\n");
             if (maxWords > 750 || maxWords < 50 + distance)
-                parser.getNotifications().addError(txtFieldMaxWordCount, "Max. Wörter muss zwischen " + (50 + distance) + " sein!\n");
+                parser.getNotifications().addError(txtFieldMaxWordCount, "Max. Wörter muss zwischen " + (50 + distance) + " und 750 sein!\n");
             if (minWords + distance >= maxWords){
                 //adding new textfield to not overwrite previous errors, not elegant but works
                 parser.getNotifications().addError(new TextField(), "Max. Wörter muss mindestens " + distance + " Wörter länger sein als Min. Wörter!\n");
