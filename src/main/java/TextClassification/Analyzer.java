@@ -1,7 +1,5 @@
 package TextClassification;
 
-import javax.json.JsonArray;
-
 /**
  * @author Huber
  */
@@ -9,7 +7,7 @@ import javax.json.JsonArray;
 public interface Analyzer {
 	final String JSON_FILE = "file.json";
 
-	public int getEmptyParagraphs(String words[]);
+	public int getEmptyParagraphs();
 
 	public int searchKeywordsAndLines(String words[]);
 }
