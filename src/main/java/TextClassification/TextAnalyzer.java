@@ -1,10 +1,11 @@
 package TextClassification;
-
+import java.util.Map;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.json.JsonArrayBuilder;
 
 import javax.json.JsonArray;
@@ -108,40 +109,37 @@ class TextAnalyzer implements Analyzer {
 	 * @author Fichte
 	 */
 
+	public class testAnalyzer {
+		public Map<String, Integer> searchNominal(JsonArray article) {
+			String line;
+			int nu = 1;
+			ArrayList<String> nominal = new ArrayList<String>();
+			Map<String, Integer> nominalCounter = new HashMap<String, Integer>();
+			int tempNumber;
+			String news;
+			String[] newsArray;
+			news = article.toString();
+			news = news.replaceAll("/\n/g,", " ");
+			newsArray = news.split(" ");
+			for (int i = 0; i < newsArray.length; i++) {
+				String tempword = newsArray[i].toString();
+				if (tempword.matches("^[A-Z](.*)") && nominal.contains(tempword)) {
+					tempNumber = nominalCounter.get(tempword) + 1;
+					nominalCounter.put(tempword, tempNumber);
+				} else if (tempword.matches("^[A-Z](.*)")) {
+					nominal.add(tempword);
+					nominalCounter.put(tempword, 1);
 
-    public ArrayList<String> searchNominal(String article[]){
-	    String line;
-        ArrayList<String> Nominal = new ArrayList<String>();
-        JsonObjectBuilder nominalCounter = Json.createObjectBuilder();
-        int tempNumber;
+				}
 
-        try {
-            InputStream JSONInput = new FileInputStream(JSON_FILE);
-            JsonReader jsonReader = Json.createReader(JSONInput);
-            mJsonArray = jsonReader.readArray();
-            while ((line = ((BufferedReader) mJsonArray).readLine()) != null) {
-                if (line.startsWith("^[A-Z](.*)")){
-                   Nominal.add(line);
-                }
-                else if(line.startsWith("^[A-Z](.*)") && Nominal.contains(line)){
-                    if(nominalCounter.build().getJsonNumber(line) != null) {
-                        nominalCounter.add(line, 1);
-                        nominalCounter.build().getJsonNumber(line);
-                    } else {
-                        tempNumber = Integer.parseInt(nominalCounter.build().getJsonNumber(line).toString());
-                        nominalCounter.add(line, tempNumber);
-                    }
-                }
 
-            }
+			}
 
-            jsonReader.close();
-            JSONInput.close();
-        } catch (IOException e) {
-            System.out.println(e.toString());
-        }
+			for (String name : nominal) {
+				System.out.println(name);
+			}
 
-        return Nominal;
-
-    }
+			return nominalCounter;
+		}
+	}
 }
