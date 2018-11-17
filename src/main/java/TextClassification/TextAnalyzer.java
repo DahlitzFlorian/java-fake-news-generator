@@ -4,9 +4,15 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import javax.json.JsonArrayBuilder;
 
-import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+
+
+import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 /**
@@ -94,4 +100,48 @@ class TextAnalyzer implements Analyzer {
 		return countWord;
 	}
 
+
+	/**
+	 * Method to count Nominals. Nominals are recognized by regex. If a string contains a Nominal at least twice, the Nominal
+	 * is counted by using a JSON.
+	 *
+	 * @author Fichte
+	 */
+
+
+    public ArrayList<String> searchNominal(String article[]){
+	    String line;
+        ArrayList<String> Nominal = new ArrayList<String>();
+        JsonObjectBuilder nominalCounter = Json.createObjectBuilder();
+        int tempNumber;
+
+        try {
+            InputStream JSONInput = new FileInputStream(JSON_FILE);
+            JsonReader jsonReader = Json.createReader(JSONInput);
+            mJsonArray = jsonReader.readArray();
+            while ((line = ((BufferedReader) mJsonArray).readLine()) != null) {
+                if (line.startsWith("^[A-Z](.*)")){
+                   Nominal.add(line);
+                }
+                else if(line.startsWith("^[A-Z](.*)") && Nominal.contains(line)){
+                    if(nominalCounter.build().getJsonNumber(line) != null) {
+                        nominalCounter.add(line, 1);
+                        nominalCounter.build().getJsonNumber(line);
+                    } else {
+                        tempNumber = Integer.parseInt(nominalCounter.build().getJsonNumber(line).toString());
+                        nominalCounter.add(line, tempNumber);
+                    }
+                }
+
+            }
+
+            jsonReader.close();
+            JSONInput.close();
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+
+        return Nominal;
+
+    }
 }
