@@ -1,11 +1,10 @@
 package TextClassification;
-import java.util.Map;
+import java.util.*;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.stream.Collectors;
 import javax.json.JsonArrayBuilder;
 
 import javax.json.JsonArray;
@@ -112,14 +111,13 @@ class TextAnalyzer implements Analyzer {
 	public class testAnalyzer {
 		public Map<String, Integer> searchNominal(JsonArray article) {
 			String line;
-			int nu = 1;
 			ArrayList<String> nominal = new ArrayList<String>();
 			Map<String, Integer> nominalCounter = new HashMap<String, Integer>();
 			int tempNumber;
 			String news;
 			String[] newsArray;
 			news = article.toString();
-			news = news.replaceAll("/\n/g,", " ");
+			news = news.replaceAll("/\n/g,", " ");  //not working probably !!
 			newsArray = news.split(" ");
 			for (int i = 0; i < newsArray.length; i++) {
 				String tempword = newsArray[i].toString();
@@ -141,5 +139,26 @@ class TextAnalyzer implements Analyzer {
 
 			return nominalCounter;
 		}
+	}
+
+
+	/**
+	 * Method gives back the top elements with the top values. The limit is set by the ratio variable. Method filters
+	 * for the msot frequently used Nominals in the article
+	 *
+	 * @author Fichte
+	 */
+
+	public  Map<String, Integer> getMostFrequentlyNominals(Map<String, Integer> Nominals){
+		Map<String, Integer> mostFrequentlyUsed = new HashMap<>();
+		int amountOfElements = Nominals.size();
+		long ratio = Math.round(amountOfElements * 0.025);
+		mostFrequentlyUsed =
+				Nominals.entrySet().stream()
+						.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+						.limit(ratio)
+						.collect(Collectors.toMap(
+								Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+		return mostFrequentlyUsed;
 	}
 }
