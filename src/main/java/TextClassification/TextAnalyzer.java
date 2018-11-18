@@ -1,4 +1,6 @@
 package TextClassification;
+import org.json.JSONArray;
+
 import java.util.*;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -160,5 +162,37 @@ class TextAnalyzer implements Analyzer {
 						.collect(Collectors.toMap(
 								Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 		return mostFrequentlyUsed;
+	}
+
+
+	/**
+	 * Method to get sentcences which contains the most frequently used Nominals.
+	 *Not completly finished yet
+	 * @author Fichte
+	 */
+
+	public ArrayList<String> classifyNominals(JsonArray article, Map<String, Integer> frequelyUsedNominals){
+		String news;
+		String [] newsArray;
+		String [] mapArray;
+		ArrayList<String> result = new ArrayList<>();
+		news = article.toString();
+		newsArray = news.split("\\.");
+		System.out.println(newsArray.length);
+		String Map = frequelyUsedNominals.toString();
+		mapArray = Map.split("=(..)");
+		Map = mapArray.toString();
+		for(int i = 0; i < newsArray.length; i++){
+			if(Arrays.stream(mapArray).anyMatch(newsArray[i]::contains)){
+				result.add(newsArray[i]);
+			}
+
+		}
+
+		for(String  noz: result){
+			System.out.println(noz);
+		}
+
+		return result;
 	}
 }
