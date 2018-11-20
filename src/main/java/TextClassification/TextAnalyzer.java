@@ -17,9 +17,10 @@ import javax.json.JsonReader;
  */
 
 class TextAnalyzer implements Analyzer {
-	JsonArray mJsonArray;
 
-	public int getEmptyParagraphs(String words[]) {
+	private JsonArray mJsonArray;
+
+	public int getEmptyParagraphs(String[] keywords) {
 		String line;
 		int emptyLine = 0;
 
@@ -27,17 +28,17 @@ class TextAnalyzer implements Analyzer {
 			// Create a reader which reads json-files
 			InputStream fileInputStream = new FileInputStream(JSON_FILE);
 			JsonReader jsonReader = Json.createReader(fileInputStream);
-			mJsonArray = jsonReader.readArray();
+			this.mJsonArray = jsonReader.readArray();
 
 			int emptyParagraphCounter = 0;
 			int lineNumber = 0;
-			while ((line = ((BufferedReader) mJsonArray).readLine()) != null) {
+			while ((line = ((BufferedReader) this.mJsonArray).readLine()) != null) {
 				if (line.equals("")) {
 					lineNumber++;
 					emptyParagraphCounter++;
 					System.out.println("The" + emptyParagraphCounter + "empty paragraph is in line" + lineNumber);
 					emptyLine = lineNumber;
-				} else if (!(line.equals(""))) {
+				} else {
 					lineNumber++;
 				}
 			}
@@ -52,27 +53,27 @@ class TextAnalyzer implements Analyzer {
 		return emptyLine;
 	}
 
-	public int searchKeywordsAndLines(String words[]) {
+	public int searchKeywordsAndLines(String[] keywords) {
 		String fileLine = "";
-		String searchedWord = words[0];
+		String searchedWord = keywords[0];
 
 		int lineNumber = 0;
 		int countWord = 0;
 
-		if (words.length > 0) {
+		if (keywords.length > 0) {
 
 			try {
 				// Create a reader which reads json-files
 				InputStream fileInputStream = new FileInputStream(JSON_FILE);
 				JsonReader jsonReader = Json.createReader(fileInputStream);
-				mJsonArray = jsonReader.readArray();
+				this.mJsonArray = jsonReader.readArray();
 
 				// Close jsonReader and fileInputStream
 				jsonReader.close();
 				fileInputStream.close();
 
 				// Search position and how often this words appear in this text
-				while ((fileLine = ((BufferedReader) mJsonArray).readLine()) != null) {
+				while ((fileLine = ((BufferedReader) this.mJsonArray).readLine()) != null) {
 					lineNumber++;
 					int position = fileLine.indexOf(searchedWord);
 
@@ -83,7 +84,7 @@ class TextAnalyzer implements Analyzer {
 				}
 
 				// Close BufferedReader
-				((BufferedReader) mJsonArray).close();
+				((BufferedReader) this.mJsonArray).close();
 			} catch (IOException e) {
 				System.out.println(e.toString());
 			}

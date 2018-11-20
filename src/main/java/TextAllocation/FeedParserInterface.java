@@ -1,7 +1,6 @@
 package TextAllocation;
 
 import javax.json.JsonArray;
-import java.util.List;
 
 public interface FeedParserInterface {
 

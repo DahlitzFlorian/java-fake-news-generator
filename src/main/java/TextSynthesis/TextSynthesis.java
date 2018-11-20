@@ -4,7 +4,6 @@ import Configuration.Configuration;
 import TextAllocation.TextAllocation;
 import TextClassification.TextClassification;
 
-import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import java.io.IOException;

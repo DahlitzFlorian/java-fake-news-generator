@@ -1,7 +1,6 @@
 package TextAllocation;
 
 import java.net.URL;
-import java.util.*;
 
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;

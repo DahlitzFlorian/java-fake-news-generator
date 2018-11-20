@@ -2,7 +2,6 @@ package TextAllocation;
 
 import javax.json.Json;
 import javax.json.JsonArray;
-import java.util.List;
 
 class Spider {
 
