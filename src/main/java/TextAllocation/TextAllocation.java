@@ -5,7 +5,7 @@ import java.util.List;
 
 public class TextAllocation {
 
-    public JsonArray getTexts(List<String> keywords, List<String> sources) {
+    public JsonArray getTexts(String[] keywords, List<String> sources) {
         JsonArrayBuilder texts = Json.createArrayBuilder();
         for(String source : sources) {
             if(this.feedExists(source)) {

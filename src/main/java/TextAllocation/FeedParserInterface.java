@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface FeedParserInterface {
 
-    JsonArray getTexts(String source, List<String> keywords);
+    JsonArray getTexts(String source, String[] keywords);
 }
