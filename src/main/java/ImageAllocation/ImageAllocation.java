@@ -4,17 +4,19 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 /**
  * @author Huber
@@ -35,21 +37,25 @@ public class ImageAllocation {
 		}
 	}
 
-	public String searchImage(String keyword) throws IOException {
-		URL url = new URL("https://ajax.googleapis.com/ajax/services/search/images?"
-				+ "v=1.0&q=barack%20obama&userip=INSERT-USER-IP");
-		String finalWebsite;
-		URLConnection internetCon = url.openConnection();
-		internetCon.addRequestProperty(keyword, "http//google.com/"); // If we want to use google
+	public String searchImage(String keyword) {
 
-		StringBuilder stringBuilder = new StringBuilder();
-		String lineAtWebsite;
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(internetCon.getInputStream()));
-		while ((lineAtWebsite = bufferedReader.readLine()) != null) {
-			stringBuilder.append(lineAtWebsite);
+		String imageUrl = "";
+		try {
+			String url = "https://www.google.com/search?tbm=isch&q=" + keyword;
+			Document jsoupDocument = Jsoup.connect(url)
+					.userAgent("\"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0\"")
+					.timeout(10 * 1000).get();
+
+			Element element = jsoupDocument.select("[data-src]").first();
+			String endOfURL = element.attr("abs:data-src");
+			imageUrl = "<a href=\"http://images.google.com/search?tbm=isch&q=" + keyword + "\"><img src=\"" + endOfURL;
+			System.out.println(imageUrl);
+
+		} catch (Exception e) {
+			System.out.println(e);
 		}
 
-		return finalWebsite = stringBuilder.toString();
+		return imageUrl;
 
 	}
 
