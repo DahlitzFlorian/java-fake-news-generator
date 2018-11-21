@@ -7,10 +7,12 @@ import java.io.IOException;
  * @author Huber
  */
 public class ImageMain {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
-		ImageParser image = new ImageParser();
-		image.FindImage("Krawall");
+		ImageAllocation image = new ImageAllocation();
+		String url = image.searchImage("Flugzeug");
+		image.getImage(url, new File("").getAbsolutePath());
 
 	}
+
 }
