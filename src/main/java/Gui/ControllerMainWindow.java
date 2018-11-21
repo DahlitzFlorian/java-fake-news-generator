@@ -45,7 +45,7 @@ public class ControllerMainWindow {
         txtFieldKeywords.pseudoClassStateChanged(errorClass, false);
         String[] keywords = getKeywords();
         if(keywords != null) {
-            textSynthesis.createArticle(keywords);
+            Popups.createPopup(Alert.AlertType.INFORMATION, textSynthesis.createArticle(keywords), "Information");
         } else {
             txtFieldKeywords.pseudoClassStateChanged(errorClass, true);
             Popups.createPopup(Alert.AlertType.ERROR, parser.getNotifications().getErrors().get(txtFieldKeywords), "Ungültige Eingabe");
