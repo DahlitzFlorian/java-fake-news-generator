@@ -13,10 +13,10 @@ import javax.json.JsonArray;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
-/*
-Class for text creation. The input parameter is a keyword. The artikelBeschaffung method searches in the given rss feeds for news which are containing the keyword.
-
-
+/**
+*Class for text creation. The input parameter is a keyword. The artikelBeschaffung method searches in the given rss feeds for news which are containing the keyword.
+*@author Fichte
+*
 */
 class FeedParser implements FeedParserInterface {
 
