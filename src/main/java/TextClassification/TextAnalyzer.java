@@ -1,19 +1,18 @@
 package TextClassification;
 
-import java.util.*;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
-import javax.json.JsonArrayBuilder;
 
 import javax.json.JsonArray;
 import javax.json.Json;
-import javax.json.JsonObjectBuilder;
 
-
-import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 /**
@@ -109,37 +108,25 @@ class TextAnalyzer implements Analyzer {
      * @author Fichte
      */
 
-    public class testAnalyzer {
-        public Map<String, Integer> searchNominal(JsonArray article) {
-            String line;
-            ArrayList<String> nominal = new ArrayList<>();
-            Map<String, Integer> nominalCounter = new HashMap<>();
-            int tempNumber;
-            String news;
-            String[] newsArray;
-            news = article.toString();
-            news = news.replaceAll("/\n/g,", " ");  //not working probably !!
-            newsArray = news.split(" ");
-            for (int i = 0; i < newsArray.length; i++) {
-                String tempword = newsArray[i].toString();
-                if (tempword.matches("^[A-Z](.*)") && nominal.contains(tempword)) {
-                    tempNumber = nominalCounter.get(tempword) + 1;
-                    nominalCounter.put(tempword, tempNumber);
-                } else if (tempword.matches("^[A-Z](.*)")) {
-                    nominal.add(tempword);
-                    nominalCounter.put(tempword, 1);
-
-                }
-
-
+    private Map<String, Integer> searchNominal(JsonArray article) {
+        Map<String, Integer> nominalCounter = new HashMap<>();
+        int tempNumber;
+        String[] news = article.toString().split("\\s"); //TODO get real resources
+        for (String word : news) {
+            if (word.matches("^[A-Z](.*)") && nominalCounter.containsKey(word)) {
+                tempNumber = nominalCounter.get(word) + 1;
+                nominalCounter.put(word, tempNumber);
+            } else if (word.matches("^[A-Z](.*)")) {
+                nominalCounter.put(word, 1);
             }
-
-            for (String name : nominal) {
-                System.out.println(name);
-            }
-
-            return nominalCounter;
         }
+
+        //debug feature
+        for (String name : nominalCounter.keySet()) {
+            System.out.println(name);
+        }
+
+        return nominalCounter;
     }
 
 
@@ -150,12 +137,12 @@ class TextAnalyzer implements Analyzer {
      * @author Fichte
      */
 
-    public Map<String, Integer> getMostFrequentlyNominals(Map<String, Integer> Nominals) {
-        Map<String, Integer> mostFrequentlyUsed = new HashMap<>();
-        int amountOfElements = Nominals.size();
+    private Map<String, Integer> getMostFrequentlyNominals(Map<String, Integer> nominals) {
+        Map<String, Integer> mostFrequentlyUsed;
+        int amountOfElements = nominals.size();
         long ratio = Math.round(amountOfElements * 0.025);
         mostFrequentlyUsed =
-                Nominals.entrySet().stream()
+                nominals.entrySet().stream()
                         .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                         .limit(ratio)
                         .collect(Collectors.toMap(
