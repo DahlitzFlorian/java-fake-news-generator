@@ -21,6 +21,11 @@ import javax.json.JsonObjectBuilder;
 class FeedParser implements FeedParserInterface {
 
     public JsonArray getTexts(String source, String[] keywords) {
+        final String fullFeed = "https://www.freefullrss.com/feed.php?url=";
+        final String fullFeedOptions = "&max=20&links=preserve&exc=&submit=Create+Full+Text+RSS";
+
+        source = fullFeed + source + fullFeedOptions;
+
         JsonArrayBuilder articles = Json.createArrayBuilder();
 
         String news;
