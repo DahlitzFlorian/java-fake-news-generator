@@ -1,7 +1,6 @@
 package TextAllocation;
 
 import java.net.URL;
-import java.util.*;
 
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
@@ -14,14 +13,19 @@ import javax.json.JsonArray;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
-/*
-Class for text creation. The input parameter is a keyword. The artikelBeschaffung method searches in the given rss feeds for news which are containing the keyword.
-
-
+/**
+*Class for text creation. The input parameter is a keyword. The artikelBeschaffung method searches in the given rss feeds for news which are containing the keyword.
+*@author Fichte
+*
 */
 class FeedParser implements FeedParserInterface {
 
-    public JsonArray getTexts(String source, List<String> keywords) {
+    public JsonArray getTexts(String source, String[] keywords) {
+        final String fullFeed = "https://www.freefullrss.com/feed.php?url=";
+        final String fullFeedOptions = "&max=20&links=preserve&exc=&submit=Create+Full+Text+RSS";
+
+        source = fullFeed + source + fullFeedOptions;
+
         JsonArrayBuilder articles = Json.createArrayBuilder();
 
         String news;

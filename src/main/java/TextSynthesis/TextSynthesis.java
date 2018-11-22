@@ -4,7 +4,6 @@ import Configuration.Configuration;
 import TextAllocation.TextAllocation;
 import TextClassification.TextClassification;
 
-import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import java.io.IOException;
@@ -12,7 +11,7 @@ import java.util.List;
 
 public class TextSynthesis {
 
-    public String createArticle(List<String> keywords) {
+    public String createArticle(String[] keywords) {
         String[] statuscodes = {
                 "Status: 2000 - Successful.",
                 "Status: 3000 - Failed to load configuration."

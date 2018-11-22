@@ -43,9 +43,9 @@ public class ControllerMainWindow {
     @FXML
     public void generateArticle() {
         txtFieldKeywords.pseudoClassStateChanged(errorClass, false);
-        List<String> keywords = getKeywords();
+        String[] keywords = getKeywords();
         if(keywords != null) {
-            textSynthesis.createArticle(keywords);
+            Popups.createPopup(Alert.AlertType.INFORMATION, textSynthesis.createArticle(keywords), "Information");
         } else {
             txtFieldKeywords.pseudoClassStateChanged(errorClass, true);
             Popups.createPopup(Alert.AlertType.ERROR, parser.getNotifications().getErrors().get(txtFieldKeywords), "Ungültige Eingabe");
@@ -69,11 +69,11 @@ public class ControllerMainWindow {
         }
     }
 
-    private List<String> getKeywords() {
-        List<String> result;
+    private String[] getKeywords() {
+        String[] result;
         String keywords = parser.parseTextField(txtFieldKeywords, "Keywords");
         if(!parser.getNotifications().hasErrors()) {
-            result = Arrays.asList(keywords.split(","));
+            result = keywords.split(",");
         } else {
             result = null;
         }
