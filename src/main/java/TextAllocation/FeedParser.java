@@ -1,7 +1,10 @@
 package TextAllocation;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.rometools.rome.feed.synd.SyndCategory;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.feed.synd.SyndEntry;
@@ -39,10 +42,14 @@ class FeedParser implements FeedParserInterface {
             for(SyndEntry feedEntry : newsFeed.getEntries()) {
                 news = feedEntry.getDescription().toString(); //Receiving the reference article
                 headline = feedEntry.getTitle(); //Receiving the headling
+                List<String> tags = new ArrayList<>();
+
+                for(SyndCategory tag : feedEntry.getCategories())
+                    tags.add(tag.getName());
 
                 boolean containsAll = true;
                 for(String keyword : keywords) {
-                    if (!news.contains(keyword)) {
+                    if (!tags.contains(keyword)) {
                         containsAll = false;
                         break;
                     }
