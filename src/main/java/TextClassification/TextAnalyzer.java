@@ -4,10 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.json.JsonArray;
@@ -185,5 +182,36 @@ class TextAnalyzer implements Analyzer {
         }
         return wordOccurrence;
     }
+	public Map<String, Double> TFIDF(ArrayList<Map<String, Integer>> AllWordOccuranceMaps) {
+		Map<String, Integer> firstMap = AllWordOccuranceMaps.get(0);
+		Map<String, Integer> amountItAppears= new HashMap<>();
 
+		Map<String, Double> result = new HashMap<>();
+		double amountWordsArticle1 = firstMap.size();
+		double amountArticles = AllWordOccuranceMaps.size();
+		for(String word : firstMap.keySet()){
+			amountItAppears.put(word, 0);
+		}
+
+
+		for (Map<String, Integer> Maps : AllWordOccuranceMaps) {
+			for (String word1 : Maps.keySet()) {
+				if (firstMap.keySet().contains(word1)) {
+					amountItAppears.put(word1, amountItAppears.get(word1)+1);
+				}
+
+			}
+		}
+		for(String word2 : firstMap.keySet()){
+			double tempDouble = amountItAppears.get(word2);
+			int amountWordInArticle1 = firstMap.get(word2);
+			double denominator = amountWordInArticle1/amountWordsArticle1;
+			double resultdivider = Math.log(amountArticles/tempDouble );
+			double tempresult = denominator*resultdivider;
+			result.put(word2, tempresult);
+
+		}
+
+		return result;
+	}
 }

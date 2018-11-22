@@ -57,6 +57,7 @@ class FeedParser implements FeedParserInterface {
     private String articleCutter(String article) { //class to cut the meta information from the reference articles
         article = article.replaceAll("SyndContentImpl.*" , "");
         article = article.replaceAll("\\<.*?>","");
+        article = article.replaceAll("\n","");
 
         return article;
     }
