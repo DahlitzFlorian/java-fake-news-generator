@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class TextSynthesis {
+    private MarkovChain markovChain = new MarkovChain(null, 2, 500);
 
     public String createArticle(String[] keywords) {
         String[] statuscodes = {
@@ -44,4 +45,6 @@ public class TextSynthesis {
     private String synthesise(JsonArray analyzedTexts) { return ""; }
 
     private void save(String article) { return; }
+
+
 }
