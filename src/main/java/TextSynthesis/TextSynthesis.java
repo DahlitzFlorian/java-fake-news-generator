@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class TextSynthesis {
-    private MarkovChain markovChain = new MarkovChain(null, 2, 500);
+
 
     public String createArticle(String[] keywords) {
         String[] statuscodes = {
@@ -33,8 +33,11 @@ public class TextSynthesis {
         TextAllocation textAllocation = new TextAllocation();
         JsonArray unanalysedTexts = textAllocation.getTexts(keywords, sources);
 
+        //TODO insert paragraphs into jsonarray
+
+
         TextClassification textClassification = new TextClassification();
-        JsonArray analysedTexts = textClassification.getAnalysedTexts(unanalysedTexts);
+        List<String> analysedTexts = textClassification.getAnalysedTexts(unanalysedTexts);
 
         String article = this.synthesise(analysedTexts);
         this.save(article);
@@ -42,7 +45,17 @@ public class TextSynthesis {
         return statuscodes[0];
     }
 
-    private String synthesise(JsonArray analyzedTexts) { return ""; }
+    private String synthesise(List<String> analysedParagraphs) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String paragraph: analysedParagraphs) {
+            stringBuilder.append(" ");
+            stringBuilder.append(paragraph);
+        }
+
+        MarkovChain markovChain = new MarkovChain(stringBuilder.toString(), 2, 200);
+
+        return markovChain.morkovify();
+    }
 
     private void save(String article) { return; }
 

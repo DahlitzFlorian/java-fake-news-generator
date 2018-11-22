@@ -26,6 +26,7 @@ class FeedParser implements FeedParserInterface {
 
         source = fullFeed + source + fullFeedOptions;
 
+
         JsonArrayBuilder articles = Json.createArrayBuilder();
 
         String news;

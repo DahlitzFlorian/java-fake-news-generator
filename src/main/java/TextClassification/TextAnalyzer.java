@@ -4,13 +4,16 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.json.JsonArray;
 import javax.json.Json;
 
+import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.json.JsonValue;
 
 /**
  * A class for analyzing a text (e.g. counting keywords and to find the lines,
@@ -105,23 +108,37 @@ class TextAnalyzer implements Analyzer {
      * @author Fichte
      */
 
-    private Map<String, Integer> searchNominal(JsonArray article) {
+    private List<String> getResourceFromJson(JsonArray article) {
+        //TODO make it better
+        int arrayLength = article.size()/3; //magic number -> array somehow contains 3 ??
+        List<String> resources = new ArrayList<>();
+        for (int i = 0; i < arrayLength; i++) {
+            JsonObject temp = article.getJsonObject(i);
+            resources.add(temp.getString("resource"));
+        }
+        return resources;
+    }
+
+    public Map<String, Integer> searchNominal(JsonArray article) {
         Map<String, Integer> nominalCounter = new HashMap<>();
         int tempNumber;
-        String[] news = article.toString().split("\\s"); //TODO get real resources
-        for (String word : news) {
-            if (word.matches("^[A-Z](.*)") && nominalCounter.containsKey(word)) {
-                tempNumber = nominalCounter.get(word) + 1;
-                nominalCounter.put(word, tempNumber);
-            } else if (word.matches("^[A-Z](.*)")) {
-                nominalCounter.put(word, 1);
+
+        List<String> news = getResourceFromJson(article);
+        for(String resource: news) {
+            String[] splitWordsResource = resource.split("\\s");
+            for (String word : splitWordsResource) {
+                if (word.matches("^[A-Z](.*)") && nominalCounter.containsKey(word)) {
+                    tempNumber = nominalCounter.get(word) + 1;
+                    nominalCounter.put(word, tempNumber);
+                } else if (word.matches("^[A-Z](.*)")) {
+                    nominalCounter.put(word, 1);
+                }
             }
         }
-
         //debug feature
-        for (String name : nominalCounter.keySet()) {
-            System.out.println(name);
-        }
+//        for (String name : nominalCounter.keySet()) {
+//            System.out.println(name);
+//        }
 
         return nominalCounter;
     }
@@ -134,7 +151,7 @@ class TextAnalyzer implements Analyzer {
      * @author Fichte
      */
 
-    private Map<String, Integer> getMostFrequentlyNominals(Map<String, Integer> nominals) {
+    public Map<String, Integer> getMostFrequentlyNominals(Map<String, Integer> nominals) {
         Map<String, Integer> mostFrequentlyUsed;
         int amountOfElements = nominals.size();
         long ratio = Math.round(amountOfElements * 0.025);
@@ -182,36 +199,49 @@ class TextAnalyzer implements Analyzer {
         }
         return wordOccurrence;
     }
-	public Map<String, Double> TFIDF(ArrayList<Map<String, Integer>> AllWordOccuranceMaps) {
-		Map<String, Integer> firstMap = AllWordOccuranceMaps.get(0);
-		Map<String, Integer> amountItAppears= new HashMap<>();
 
-		Map<String, Double> result = new HashMap<>();
-		double amountWordsArticle1 = firstMap.size();
-		double amountArticles = AllWordOccuranceMaps.size();
-		for(String word : firstMap.keySet()){
-			amountItAppears.put(word, 0);
-		}
+    public ArrayList<Map<String, Integer>> buildWordOccurrenceArrayList(JsonArray article) {
+        List<String> resources = getResourceFromJson(article);
+        ArrayList<Map<String,Integer> > wordOccurenceOfAllArticels = new ArrayList<>();
+        for(String source: resources) {
+            String[] splitWords  = splitWords(source, true);
+            Map<String, Integer> wordFrequency = wordOccurrence(splitWords);
+            wordOccurenceOfAllArticels.add(wordFrequency);
+        }
+
+        return wordOccurenceOfAllArticels;
+    }
+
+    public Map<String, Double> TFIDF(ArrayList<Map<String, Integer>> AllWordOccuranceMaps) {
+        Map<String, Integer> firstMap = AllWordOccuranceMaps.get(0);
+        Map<String, Integer> amountItAppears = new HashMap<>();
+
+        Map<String, Double> result = new HashMap<>();
+        double amountWordsArticle1 = firstMap.size();
+        double amountArticles = AllWordOccuranceMaps.size();
+        for (String word : firstMap.keySet()) {
+            amountItAppears.put(word, 0);
+        }
 
 
-		for (Map<String, Integer> Maps : AllWordOccuranceMaps) {
-			for (String word1 : Maps.keySet()) {
-				if (firstMap.keySet().contains(word1)) {
-					amountItAppears.put(word1, amountItAppears.get(word1)+1);
-				}
+        for (Map<String, Integer> Maps : AllWordOccuranceMaps) {
+            for (String word1 : Maps.keySet()) {
+                if (firstMap.keySet().contains(word1)) {
+                    amountItAppears.put(word1, amountItAppears.get(word1) + 1);
+                }
 
-			}
-		}
-		for(String word2 : firstMap.keySet()){
-			double tempDouble = amountItAppears.get(word2);
-			int amountWordInArticle1 = firstMap.get(word2);
-			double denominator = amountWordInArticle1/amountWordsArticle1;
-			double resultdivider = Math.log(amountArticles/tempDouble );
-			double tempresult = denominator*resultdivider;
-			result.put(word2, tempresult);
+            }
+        }
+        for (String word2 : firstMap.keySet()) {
+            double tempDouble = amountItAppears.get(word2);
+            int amountWordInArticle1 = firstMap.get(word2);
+            double denominator = amountWordInArticle1 / amountWordsArticle1;
+            double resultdivider = Math.log(amountArticles / tempDouble);
+            double tempresult = denominator * resultdivider;
+            result.put(word2, tempresult);
 
-		}
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

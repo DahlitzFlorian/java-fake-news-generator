@@ -3,6 +3,7 @@
 # Edit at https://www.gitignore.io/?templates=git,maven,eclipse,intellij,visualstudiocode
 
 ### Local Stuff ###
+test-file.txt
 config.json
 
 ### Eclipse ###

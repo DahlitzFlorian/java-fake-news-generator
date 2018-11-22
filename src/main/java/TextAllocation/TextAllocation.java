@@ -14,7 +14,8 @@ public class TextAllocation {
     public JsonArray getTexts(String[] keywords, List<String> sources) {
         JsonArrayBuilder texts = Json.createArrayBuilder();
         for(String source : sources) {
-            String feedUrl = this.getFeedUrl(source);
+            //String feedUrl = this.getFeedUrl(source);
+            String feedUrl = source.replaceAll("\"", "");
             if(!feedUrl.equals("")) {
                 FeedParser feedParser = new FeedParser();
                 for(JsonValue value : feedParser.getTexts(feedUrl, keywords)) {
@@ -34,6 +35,7 @@ public class TextAllocation {
         return texts.build();
     }
 
+    //TODO get it working
     private String getFeedUrl(String source) {
         try {
             URL url = new URL(source);
@@ -41,7 +43,6 @@ public class TextAllocation {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line;
-
             while ((line = br.readLine()) != null) {
                 if(line.contains("<link rel=\"alternate\" type=\"application/rss+xml\"")) {
                     return line.split("href=")[1].split("\"")[1];
@@ -50,6 +51,7 @@ public class TextAllocation {
 
             return "";
         } catch (IOException ioe) {
+            ioe.printStackTrace();
             return "";
         }
     }
