@@ -73,7 +73,7 @@ public class ControllerMainWindow {
         String[] result;
         String keywords = parser.parseTextField(txtFieldKeywords, "Keywords");
         if(!parser.getNotifications().hasErrors()) {
-            result = keywords.split(",");
+            result = Arrays.stream(keywords.split(",")).map(keyword -> keyword.toLowerCase()).toArray(String[]::new);
         } else {
             result = null;
         }

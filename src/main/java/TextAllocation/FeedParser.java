@@ -45,17 +45,20 @@ class FeedParser implements FeedParserInterface {
                 List<String> tags = new ArrayList<>();
 
                 for(SyndCategory tag : feedEntry.getCategories())
-                    tags.add(tag.getName());
+                    tags.add(tag.getName().toLowerCase());
 
-                boolean containsAll = true;
+                boolean containsOne = false;
+                int keywordsInArticle = 0;
+
                 for(String keyword : keywords) {
-                    if (!tags.contains(keyword)) {
-                        containsAll = false;
-                        break;
-                    }
+                    if(tags.contains(keyword))
+                        containsOne = true;
+
+                    if(news.toLowerCase().contains(keyword))
+                        keywordsInArticle++;
                 }
 
-                if(containsAll)
+                if(containsOne || keywordsInArticle + 1 == keywords.length)
                     articles.add(this.articleBuilder(news, headline)); //Call method to build return JSON
             }
         } catch (Exception e) {
