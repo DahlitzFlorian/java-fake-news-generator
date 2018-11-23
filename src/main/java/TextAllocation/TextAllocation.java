@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,7 +16,9 @@ public class TextAllocation {
         JsonArrayBuilder texts = Json.createArrayBuilder();
         for(String source : sources) {
             String feedUrl = this.getFeedUrl(source);
+            System.out.println(feedUrl);
             if(!feedUrl.equals("")) {
+                System.out.println("n");
                 FeedParser feedParser = new FeedParser();
                 for(JsonValue value : feedParser.getTexts(feedUrl, keywords)) {
                     JsonObject text = (JsonObject) value;
@@ -43,7 +46,7 @@ public class TextAllocation {
             String line;
 
             while ((line = br.readLine()) != null) {
-                if(line.contains("<link rel=\"alternate\" type=\"application/rss+xml\"")) {
+                if(line.contains("<link rel=\"alternate\"") && line.contains("type=\"application/rss+xml\"")) {
                     return line.split("href=")[1].split("\"")[1];
                 }
             }
