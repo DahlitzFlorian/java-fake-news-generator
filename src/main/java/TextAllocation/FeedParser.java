@@ -59,7 +59,7 @@ class FeedParser implements FeedParserInterface {
                 }
 
                 if(containsOne || keywordsInArticle + 1 == keywords.length)
-                    articles.add(this.articleBuilder(news, headline)); //Call method to build return JSON
+                    articles.add(this.articleBuilder(feedEntry.getLink(), headline)); //Call method to build return JSON
             }
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
@@ -68,27 +68,18 @@ class FeedParser implements FeedParserInterface {
         return articles.build();
     }
 
-    private String articleCutter(String article) { //class to cut the meta information from the reference articles
-        article = article.replaceAll("SyndContentImpl.*" , "");
-        article = article.replaceAll("\\<.*?>","");
-        article = article.replaceAll("\n","");
-
-        return article;
-    }
-
-    private JsonObject articleBuilder(String news, String title) { // Input are a JSON article, the news, and the headline
+    private JsonObject articleBuilder(String resource, String title) { // Input are a JSON article, the news, and the headline
         JsonObjectBuilder article = Json.createObjectBuilder();
 
         JsonObjectBuilder paragraphObject = Json.createObjectBuilder();
         JsonArrayBuilder paragraphArray = Json.createArrayBuilder();
         JsonArrayBuilder  tags = Json.createArrayBuilder(); //empty JSON array for tags
 
-        news = this.articleCutter(news); // first cutting out all meta information
         paragraphObject.add("tags", tags.build()); //tags are added in the Textanalyse
         paragraphObject.add("content", "");
         paragraphArray.add(paragraphObject.build());
 
-        article.add("resource", news); //each reference article is a ressource
+        article.add("resource", resource); //each reference article is a ressource
         article.add("title", title);
         article.add( "paragraph", paragraphArray.build());
 
