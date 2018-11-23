@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class TextAllocation {
@@ -15,14 +14,16 @@ public class TextAllocation {
     public JsonArray getTexts(String[] keywords, List<String> sources) {
         JsonArrayBuilder texts = Json.createArrayBuilder();
         for(String source : sources) {
-            String feedUrl = this.getFeedUrl(source);
-            System.out.println(feedUrl);
-            if(!feedUrl.equals("")) {
-                System.out.println("n");
+            List<String> feedUrls = this.getFeedUrls(source);
+
+            if(feedUrls.size() != 0) {
                 FeedParser feedParser = new FeedParser();
-                for(JsonValue value : feedParser.getTexts(feedUrl, keywords)) {
-                    JsonObject text = (JsonObject) value;
-                    texts.add(text);
+
+                for(String feedUrl : feedUrls) {
+                    for (JsonValue value : feedParser.getTexts(feedUrl, keywords)) {
+                        JsonObject text = (JsonObject) value;
+                        texts.add(text);
+                    }
                 }
             }
             else {
@@ -37,7 +38,8 @@ public class TextAllocation {
         return texts.build();
     }
 
-    private String getFeedUrl(String source) {
+    private List<String> getFeedUrls(String source) {
+        List<String> feedUrls = new ArrayList<>();
         try {
             URL url = new URL(source);
             URLConnection conn = url.openConnection();
@@ -47,13 +49,13 @@ public class TextAllocation {
 
             while ((line = br.readLine()) != null) {
                 if(line.contains("<link rel=\"alternate\"") && line.contains("type=\"application/rss+xml\"")) {
-                    return line.split("href=")[1].split("\"")[1];
+                    feedUrls.add(line.split("href=")[1].split("\"")[1]);
                 }
             }
 
-            return "";
+            return feedUrls;
         } catch (IOException ioe) {
-            return "";
+            return feedUrls;
         }
     }
 }
