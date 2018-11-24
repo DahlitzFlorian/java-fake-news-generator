@@ -182,6 +182,9 @@ class TextAnalyzer implements Analyzer {
         }
         return wordOccurrence;
     }
+
+
+
 	public Map<String, Double> TFIDF(ArrayList<Map<String, Integer>> AllWordOccuranceMaps) {
 		Map<String, Integer> firstMap = AllWordOccuranceMaps.get(0);
 		Map<String, Integer> amountItAppears= new HashMap<>();
