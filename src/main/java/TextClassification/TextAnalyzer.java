@@ -1,12 +1,9 @@
 package TextClassification;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
+import java.io.BufferedReader;
 import javax.json.JsonArray;
 import javax.json.Json;
 
@@ -217,4 +214,52 @@ class TextAnalyzer implements Analyzer {
 
 		return result;
 	}
+	//Still running in null pointer excepiton
+    public ArrayList<String> getTFIDFFillerTexts() {
+        Scanner x;
+        String basePath = new File("").getAbsolutePath();
+        ArrayList<String> fillerTexts = new ArrayList();
+        ArrayList<Integer> noDuplicates = new ArrayList();
+        Random textIndex = new Random();
+        ArrayList<String> tempText = new ArrayList<>();
+        int tempTextSize = 0;
+        int randomNumber;
+        for (int i = 0; i < 4; i++) {
+            randomNumber = textIndex.nextInt(32);
+            if (!noDuplicates.contains(randomNumber)) {
+                String textName = "text" + randomNumber + ".txt";
+                try {
+                    x = new Scanner(new File(basePath + "\\src\\main\\java\\TFIDF_Training_Texts\\" +textName));
+
+                } catch (Exception e) {
+                    return null;
+                }
+                while (x.hasNext() && tempTextSize != 1000) {
+
+                    tempText.add(x.next());
+                    tempTextSize ++;
+
+                }
+
+
+                String fillerText = tempText.subList(0, tempTextSize).toString();
+                tempText.clear();
+                fillerText = fillerText.replaceAll(",", "");
+
+
+                fillerTexts.add(fillerText);
+                noDuplicates.add(randomNumber);
+                tempTextSize = 0;
+                x.close();
+
+            }
+
+            else{
+                i--;
+            }
+
+        }
+
+        return fillerTexts;
+    }
 }
