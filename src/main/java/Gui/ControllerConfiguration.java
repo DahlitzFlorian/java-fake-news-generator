@@ -9,6 +9,7 @@ import Utils.Popups;
 
 
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import java.io.IOException;
 import java.net.URL;
@@ -92,13 +93,17 @@ public class ControllerConfiguration implements Initializable {
         //check for errors
         if (!validate(maxWordsString, minWordsString)) return null;
 
+        JsonArrayBuilder sourcesArray = Json.createArrayBuilder();
+        for (String source : sources) {
+            sourcesArray.add(source);
+        }
+
         //if everything's good -> generate JSON
         JsonObject result = Json.createObjectBuilder()
                 .add("min", Integer.parseInt(minWordsString))
                 .add("max", Integer.parseInt(maxWordsString))
                 .add("min_distance", 50)
-                .add("sources", Json.createArrayBuilder()
-                        .add(String.join("\",\"", sources)))
+                .add("sources", sourcesArray.build())
                 .build();
         log.info(result.toString());
         return result;
@@ -128,7 +133,7 @@ public class ControllerConfiguration implements Initializable {
                 parser.getNotifications().addError(txtFieldMinWordCount, "Min. Wörter muss zwischen 50 und " + (750 - distance) + " sein!\n");
             if (maxWords > 750 || maxWords < 50 + distance)
                 parser.getNotifications().addError(txtFieldMaxWordCount, "Max. Wörter muss zwischen " + (50 + distance) + " und 750 sein!\n");
-            if (minWords + distance >= maxWords){
+            if (minWords + distance >= maxWords) {
                 //adding new textfield to not overwrite previous errors, not elegant but works
                 parser.getNotifications().addError(new TextField(), "Max. Wörter muss mindestens " + distance + " Wörter länger sein als Min. Wörter!\n");
                 txtFieldMaxWordCount.pseudoClassStateChanged(errorClass, true);
@@ -138,7 +143,7 @@ public class ControllerConfiguration implements Initializable {
         }
 
         //if errors are present after checking max/min count
-        if(parser.getNotifications().hasErrors()){
+        if (parser.getNotifications().hasErrors()) {
             //Mark invalid inputs red
             for (TextInputControl t : parser.getNotifications().getErrors().keySet()) {
                 t.pseudoClassStateChanged(errorClass, true);
