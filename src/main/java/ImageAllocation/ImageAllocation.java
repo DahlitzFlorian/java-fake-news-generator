@@ -56,7 +56,11 @@ public class ImageAllocation {
 		}
 
 		return imageUrl;
+	}
 
+	public int randomNumber() {
+		int zahl = 0;
+		return zahl = (int) (Math.random() * 10);
 	}
 
 }
