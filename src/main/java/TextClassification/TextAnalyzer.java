@@ -4,10 +4,14 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.swing.text.Document;
 
 /**
  * A class for analyzing a text (e.g. counting keywords and to find the lines,
@@ -94,6 +98,27 @@ class TextAnalyzer implements Analyzer {
 		}
 
 		return countWord;
+	}
+
+	public List<String> separateParagraphs(JsonArray article) {
+		String searchFor = "\n";
+		String json = "";
+		boolean contains = false;
+		int length = article.size() / 3;
+		List<String> listOfParagraphs = new ArrayList<>();
+
+		for (int i = 0; i < length; i++) {
+			JsonObject temp = article.getJsonObject(i);
+			for (int j = 0; j < temp.size(); j++) {
+				json = article.toString();
+				contains = json.contains(searchFor);
+
+				if (contains == true) {
+					listOfParagraphs.add(json);
+				}
+			}
+		}
+		return listOfParagraphs;
 	}
 
 }
