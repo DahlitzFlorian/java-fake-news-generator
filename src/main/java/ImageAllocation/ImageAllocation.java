@@ -13,15 +13,19 @@ import java.io.OutputStream;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  * @author Huber
  */
-public class ImageAllocation {
+public class ImageAllocation extends ArrayList<Element> {
+
+	private static final long serialVersionUID = 1L;
 
 	public void getImage(String url, String directoryFinal)
 			throws IOException, FileNotFoundException, MalformedURLException {
@@ -46,7 +50,7 @@ public class ImageAllocation {
 					.userAgent("\"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0\"")
 					.timeout(10 * 1000).get();
 
-			Element element = jsoupDocument.select("[data-src]").first();
+			Element element = jsoupDocument.select("[data-src]").get((int) (Math.random() * 10));
 			String endOfURL = element.attr("abs:data-src");
 			imageUrl = "<a href=\"http://images.google.com/search?tbm=isch&q=" + keyword + "\"><img src=\"" + endOfURL;
 			System.out.println(imageUrl);
@@ -58,9 +62,10 @@ public class ImageAllocation {
 		return imageUrl;
 	}
 
-	public int randomNumber() {
+	public Element randomNumber() {
 		int zahl = 0;
-		return zahl = (int) (Math.random() * 10);
+		zahl = (int) (Math.random() * 10);
+		return isEmpty() ? null : get(zahl);
 	}
 
 }
