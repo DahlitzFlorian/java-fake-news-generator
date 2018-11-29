@@ -42,7 +42,7 @@ public class ImageAllocation extends ArrayList<Element> {
 	}
 
 	public String searchImage(String keyword) {
-
+		int randomNumber = 10;
 		String imageUrl = "";
 		try {
 			String url = "https://www.google.com/search?tbm=isch&q=" + keyword;
@@ -50,7 +50,7 @@ public class ImageAllocation extends ArrayList<Element> {
 					.userAgent("\"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0\"")
 					.timeout(10 * 1000).get();
 
-			Element element = jsoupDocument.select("[data-src]").get((int) (Math.random() * 10));
+			Element element = jsoupDocument.select("[data-src]").get((int) (Math.random() * randomNumber));
 			String endOfURL = element.attr("abs:data-src");
 			imageUrl = "<a href=\"http://images.google.com/search?tbm=isch&q=" + keyword + "\"><img src=\"" + endOfURL;
 			System.out.println(imageUrl);
@@ -63,8 +63,9 @@ public class ImageAllocation extends ArrayList<Element> {
 	}
 
 	public Element randomNumber() {
+		int randomNumber = 10;
 		int zahl = 0;
-		zahl = (int) (Math.random() * 10);
+		zahl = (int) (Math.random() * randomNumber);
 		return isEmpty() ? null : get(zahl);
 	}
 
