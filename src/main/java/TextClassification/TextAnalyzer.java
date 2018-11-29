@@ -254,7 +254,7 @@ class TextAnalyzer implements Analyzer {
         int tempTextSize = 0;
         int randomNumber;
         for (int i = 0; i < 4; i++) {
-            randomNumber = textIndex.nextInt(32);
+            randomNumber = textIndex.nextInt(44);
             if (!noDuplicates.contains(randomNumber)) {
                 String textName = "text" + randomNumber + ".txt";
                 try {
