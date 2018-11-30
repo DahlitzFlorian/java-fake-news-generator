@@ -1,24 +1,19 @@
 package ImageAllocation;
 
-import org.apache.commons.io.FilenameUtils;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 /**
  * @author Huber
@@ -27,13 +22,13 @@ public class ImageAllocation extends ArrayList<Element> {
 
 	private static final long serialVersionUID = 1L;
 
-	public void getImage(String url, String directoryFinal)
-			throws IOException, FileNotFoundException, MalformedURLException {
+	public void getImage(String url, String directoryFinal) throws IOException {
 		int counter = 0;
 		URL urlImage = new URL(url);
+
 		try (InputStream imageReaderInput = new BufferedInputStream(urlImage.openStream());
-				OutputStream imageWriterOutput = new BufferedOutputStream(
-						new FileOutputStream(directoryFinal + File.separator + FilenameUtils.getName(url)));) {
+             OutputStream imageWriterOutput = new BufferedOutputStream(
+                     new FileOutputStream(directoryFinal + File.separator + "image.jpg"))) {
 
 			while ((counter = imageReaderInput.read()) != -1) {
 				imageWriterOutput.write(counter);
@@ -51,10 +46,9 @@ public class ImageAllocation extends ArrayList<Element> {
 					.timeout(10 * 1000).get();
 
 			Element element = jsoupDocument.select("[data-src]").get((int) (Math.random() * randomNumber));
-			String endOfURL = element.attr("abs:data-src");
-			imageUrl = "<a href=\"http://images.google.com/search?tbm=isch&q=" + keyword + "\"><img src=\"" + endOfURL;
-			System.out.println(imageUrl);
+			imageUrl = element.attr("abs:data-src");
 
+			System.out.println(imageUrl);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
