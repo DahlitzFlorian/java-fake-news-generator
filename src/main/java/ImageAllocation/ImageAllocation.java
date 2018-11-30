@@ -44,23 +44,14 @@ public class ImageAllocation extends ArrayList<Element> {
 			Document jsoupDocument = Jsoup.connect(url)
 					.userAgent("\"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0\"")
 					.timeout(10 * 1000).get();
-
+			
 			Element element = jsoupDocument.select("[data-src]").get((int) (Math.random() * randomNumber));
 			imageUrl = element.attr("abs:data-src");
-
-			System.out.println(imageUrl);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 
 		return imageUrl;
-	}
-
-	public Element randomNumber() {
-		int randomNumber = 10;
-		int zahl = 0;
-		zahl = (int) (Math.random() * randomNumber);
-		return isEmpty() ? null : get(zahl);
 	}
 
 }
