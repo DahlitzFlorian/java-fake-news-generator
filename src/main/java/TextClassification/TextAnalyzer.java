@@ -180,6 +180,27 @@ class TextAnalyzer implements Analyzer {
             return corpus.split("\\s");
     }
 
+
+    public List<String> separateParagraphs(JsonArray article) {
+
+        String json = "";
+        int length = article.size() / 3;
+        List<String> listOfParagraphs = new ArrayList<>();
+
+        for (int i = 0; i < length+1; i++) {
+            JsonObject temp = article.getJsonObject(i);
+            for (int j = 0; j < temp.size(); j++) {
+                json = article.toString();
+                json =json.replaceAll("\\{\\[","");
+                json = json.replaceAll("]}","");
+                String [] tempArray = json.split("\\r?\\n");
+                listOfParagraphs = new ArrayList<String>(Arrays.asList(tempArray));
+            }
+        }
+
+        return listOfParagraphs;
+
+    }
     /**
      * @param wordList an array of the words to be counted
      * @return a Map containing the word as key and the number of occurrences as value
@@ -285,4 +306,5 @@ class TextAnalyzer implements Analyzer {
 
         return fillerTexts;
     }
+
 }
