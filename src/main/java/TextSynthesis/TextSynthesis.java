@@ -15,12 +15,22 @@ import java.util.List;
 
 public class TextSynthesis {
     //private MarkovChain markovChain = new MarkovChain(null, 2, 500);
+    private enum StatusCodes {
+        SUCCESS("2000 - Successful"),
+        FAILED_ON_CONFIGURATION("3000 - Failed to load configuration");
+
+        private final String text;
+
+        StatusCodes(final String text) {
+            this.text = text;
+        }
+
+        public String getCode() {
+            return text;
+        }
+    }
 
     public String createArticle(String[] keywords) {
-        String[] statuscodes = {
-                "Status: 2000 - Successful.",
-                "Status: 3000 - Failed to load configuration."
-        };
 
         Configuration config = new Configuration();
         JsonObject textConfig = null;
@@ -29,7 +39,7 @@ public class TextSynthesis {
             textConfig = config.getTextConfigurations();
         } catch (IOException ioe) {
             ioe.printStackTrace();
-            return statuscodes[1];
+            return StatusCodes.FAILED_ON_CONFIGURATION.getCode();
         }
 
         List<String> sources = config.getSources(textConfig);
@@ -46,7 +56,7 @@ public class TextSynthesis {
         ImageAllocation imageAllocation = new ImageAllocation();
         imageAllocation.getImage(finalDirectory, keywords);
 
-        return statuscodes[0];
+        return StatusCodes.SUCCESS.getCode();
     }
 
     private String[] synthesise(JsonArray analyzedTexts) {
