@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -22,21 +23,31 @@ public class ImageAllocation extends ArrayList<Element> {
 
 	private static final long serialVersionUID = 1L;
 
-	public void getImage(String url, String directoryFinal) throws IOException {
+	public void getImage(String path, String[] keywords) {
 		int counter = 0;
-		URL urlImage = new URL(url);
+        URL imageUrl = null;
 
-		try (InputStream imageReaderInput = new BufferedInputStream(urlImage.openStream());
+        try {
+            imageUrl = new URL(this.searchImage(String.join(" ", keywords)));
+        } catch(MalformedURLException mue) {
+		    System.out.println("Error: " + mue.getMessage());
+
+		    return;
+        }
+
+		try (InputStream imageReaderInput = new BufferedInputStream(imageUrl.openStream());
              OutputStream imageWriterOutput = new BufferedOutputStream(
-                     new FileOutputStream(directoryFinal + File.separator + "image.jpg"))) {
+                     new FileOutputStream(path + File.separator + "image.jpg"))) {
 
 			while ((counter = imageReaderInput.read()) != -1) {
 				imageWriterOutput.write(counter);
 			}
-		}
+		} catch(IOException ioe) {
+		    System.out.println("Error: " + ioe.getMessage());
+        }
 	}
 
-	public String searchImage(String keyword) {
+	private String searchImage(String keyword) {
 		int randomNumber = 10;
 		String imageUrl = "";
 		try {

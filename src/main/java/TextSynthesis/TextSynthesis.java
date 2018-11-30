@@ -1,6 +1,7 @@
 package TextSynthesis;
 
 import Configuration.Configuration;
+import ImageAllocation.ImageAllocation;
 import TextAllocation.TextAllocation;
 import TextClassification.TextClassification;
 
@@ -40,7 +41,10 @@ public class TextSynthesis {
         JsonArray analysedTexts = textClassification.getAnalysedTexts(unanalysedTexts);
 
         String[] result = this.synthesise(analysedTexts);
-        this.save(result[0], result[1]);
+        String finalDirectory = this.save(result[0], result[1]);
+
+        ImageAllocation imageAllocation = new ImageAllocation();
+        imageAllocation.getImage(finalDirectory, keywords);
 
         return statuscodes[0];
     }
@@ -53,11 +57,13 @@ public class TextSynthesis {
 
     public static void main(String[] args) {
         TextSynthesis textSynthesis = new TextSynthesis();
-        textSynthesis.save("headline", "soe");
+        String[] keywords = {"Politik", "usa"};
+        textSynthesis.createArticle(keywords);
     }
 
-    public void save(String headline, String article) {
-        new File(headline).mkdir();
+    public String save(String headline, String article) {
+        File finalDirectory = new File(headline);
+        finalDirectory.mkdir();
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(headline + "/" + headline + ".txt"))) {
             writer.write(headline);
@@ -67,6 +73,8 @@ public class TextSynthesis {
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
+
+        return finalDirectory.getAbsolutePath();
     }
 
 
