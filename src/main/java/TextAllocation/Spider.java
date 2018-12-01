@@ -1,8 +1,9 @@
 package TextAllocation;
 
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,9 +39,9 @@ public class Spider {
      * @param baseUrl
      * @param keywords
      */
-    public JsonObject search(String baseUrl, String[] keywords) {
+    public JsonArray search(String baseUrl, String[] keywords) {
 
-        JsonObjectBuilder articles = Json.createObjectBuilder();
+        JsonArrayBuilder articles = Json.createArrayBuilder();
 
         while(this.pagesVisited.size() < MAX_PAGES) {
             String currentUrl;
