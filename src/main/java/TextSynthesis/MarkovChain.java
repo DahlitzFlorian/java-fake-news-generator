@@ -1,80 +1,119 @@
 package TextSynthesis;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+import static java.util.Arrays.copyOfRange;
 
 
 //TODO make this more efficient
-//TODO add a weight function making chains containing keywords more frequent
 //TODO implement function generating starting grams (having texts start with different words)
 //TODO add context free grammar(maybe) -> text makes more sense
 class MarkovChain {
     private int order;
     private int length;
     private String[] words;
+    private String[] keywords;
+    private Map<String, Map<String, Integer>> nGrams = new HashMap<>();
 
-    MarkovChain(String corpus, int order, int length) {
+    MarkovChain(String corpus, int order, int length, String[] keywords) {
         this.order = order;
         //TODO let quotes stay intact
         this.words = corpus.split("\\s");
         this.length = length;
+        this.keywords = keywords;
     }
 
-    String morkovify() {
-        Map<String, List<String>> nGrams = generateNGrams();
+    String markovify() {
+        generateNGrams();
         //Choose starting gram, for now choose the first word sequence
-        String currentGram = arrayToString(Arrays.copyOfRange(words, 0, order));
+        String currentGram = arrayToString(copyOfRange(words, 0, order));
         StringBuilder result = new StringBuilder();
         result.append(currentGram);
 
         //TODO generate length based on user's input
         for (int i = 0; i < length; i++) {
-            List<String> possibilities = nGrams.get(currentGram);
-            if (possibilities == null) {
+            Map<String, Integer> possibilities = nGrams.get(currentGram);
+            Map<String, Integer> backup = new HashMap<>(possibilities);
+
+            if (possibilities.isEmpty()) {
                 //TODO choose new starting gram when reaching null
                 System.err.println("null");
                 return result.toString();
             }
-            //Math.floor needed?
-            int next = (int) Math.floor(Math.random() * possibilities.size());
-            currentGram = possibilities.get(next);
+            possibilities.replaceAll((k, v) -> {
+                for(String keyword: keywords) {
+                    if(k.toLowerCase().contains(keyword.toLowerCase())) { v+=2; }
+                }
+                return v;
+            });
+            String next = getRandomNextEntry(possibilities);
+            //restore old values
+            possibilities.putAll(backup);
+            currentGram = next;
             result.append(" ");
-            result.append(possibilities.get(next));
+            result.append(next);
         }
         return result.toString();
     }
 
+    private String getRandomNextEntry(Map<String, Integer> probabilities) {
+        Random rnd = new Random();
+        int totalSum = 0;
+        Set<String> keySet = probabilities.keySet();
+        for (String key : keySet) {
+            totalSum += probabilities.get(key);
+        }
+        int index = rnd.nextInt(totalSum);
+        if (index == 0) index = 1;
+        System.out.println("index: " + index + " totalSum: " + totalSum);
+        int sum = 0;
+        String[] keySetAsString = keySet.toArray(new String[keySet.size()]);
+        System.out.println(Arrays.toString(keySetAsString));
+        int i = 0;
+        while (sum < index) {
+            sum += probabilities.get(keySetAsString[i++]);
+        }
+        return keySetAsString[i-1];
+    }
+
     //TODO english comments
-    private Map<String, List<String>> generateNGrams() {
-        Map<String, List<String>> nGrams = new HashMap<>();
+    private void generateNGrams() {
         int wordCount = words.length;
 
         for (int i = 0; i < wordCount - order; i++) {
             //Wörterketten der größe 'order' aus array rausnehmen
-            String[] gramArray = Arrays.copyOfRange(words, i, i + order);
+            String[] gramArray = copyOfRange(words, i, i + order);
             String gram = arrayToString(gramArray);
+            String followingGram = arrayToString(copyOfRange(words, order + i, order * 2 + i));
+
+            //if gram is not yet stored in map
             if (!nGrams.containsKey(gram)) {
-                nGrams.put(gram, new ArrayList<>());
+                nGrams.put(gram, new HashMap<>());
             }
-            //Get the arrayList
-            List<String> possibleWords = nGrams.get(gram);
-            //Push the words that follow the gram into the List thus creating a "weight" for every word sequence
-            possibleWords.add(arrayToString(Arrays.copyOfRange(words, order + i, order * 2 + i)));
-            nGrams.put(gram, possibleWords);
+
+            //if following words not in following grams -> add it else increase occurrence
+            if (!nGrams.get(gram).containsKey(followingGram)) {
+                nGrams.get(gram).put(followingGram, 1);
+            } else {
+                int occurrence = nGrams.get(gram).get(followingGram);
+                nGrams.get(gram).put(followingGram, ++occurrence);
+            }
         }
-        return nGrams;
     }
 
     //TODO make this work for different orders, only works for order 2. Or implement a better method
     private String arrayToString(String[] array) {
-        return Arrays.toString(array).replace("[","").replace("]", "").replaceFirst(",", "");
+        return Arrays.toString(array).replace("[", "").replace("]", "").replaceFirst(",", "");
     }
 
     //TODO implement this
     private List<String> generateStartingNGrams() {
         return null;
     }
+
 }
