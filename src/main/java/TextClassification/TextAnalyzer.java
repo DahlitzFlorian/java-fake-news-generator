@@ -5,7 +5,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -22,6 +25,8 @@ import javax.swing.text.Document;
 
 class TextAnalyzer implements Analyzer {
 	JsonArray mJsonArray;
+	private Matcher matcher;
+	private Pattern pattern;
 
 	public int getEmptyParagraphs() {
 		String line;
@@ -101,24 +106,25 @@ class TextAnalyzer implements Analyzer {
 	}
 
 	public List<String> separateParagraphs(JsonArray article) {
-		String searchFor = "\n";
+
 		String json = "";
-		boolean contains = false;
+		String wordwrap = "\\r?\\n";
+
 		int length = article.size() / 3;
 		List<String> listOfParagraphs = new ArrayList<>();
 
-		for (int i = 0; i < length; i++) {
+		for (int i = 0; i < length + 1; i++) {
 			JsonObject temp = article.getJsonObject(i);
 			for (int j = 0; j < temp.size(); j++) {
 				json = article.toString();
-				contains = json.contains(searchFor);
-
-				if (contains == true) {
-					listOfParagraphs.add(json);
-				}
+				json = json.replaceAll("\\{\\[", "");
+				json = json.replaceAll("]}", "");
+				String[] tempArray = json.split(wordwrap);
+				listOfParagraphs = new ArrayList<String>(Arrays.asList(tempArray));
 			}
 		}
-		return listOfParagraphs;
-	}
 
+		return listOfParagraphs;
+
+	}
 }
