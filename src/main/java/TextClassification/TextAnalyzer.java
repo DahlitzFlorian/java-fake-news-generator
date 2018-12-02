@@ -119,6 +119,13 @@ class TextAnalyzer implements Analyzer {
         return resources;
     }
 
+    /**
+     * @param article an arcicle as JsonArray
+     * @return a Map<String, Integer> containg the nominals of an article
+     * @author Fichte
+     * Methode to get the nominals of an article
+     */
+
     public Map<String, Integer> searchNominal(JsonArray article) {
         Map<String, Integer> nominalCounter = new HashMap<>();
         int tempNumber;
@@ -145,10 +152,12 @@ class TextAnalyzer implements Analyzer {
 
 
     /**
-     * Method gives back the top elements with the top values. The limit is set by the ratio variable. Method filters
+     * @param nominals a Map containg all nominals
+     * @return a Map<String, Integer> containg the top used nominals
+     * @author Fichte
+     * * Method gives back the top elements with the top values. The limit is set by the ratio variable. Method filters
      * for the msot frequently used Nominals in the article
      *
-     * @author Fichte
      */
 
     public Map<String, Integer> getMostFrequentlyNominals(Map<String, Integer> nominals) {
@@ -233,6 +242,13 @@ class TextAnalyzer implements Analyzer {
         return wordOccurenceOfAllArticels;
     }
 
+    /**
+     * @param AllWordOccuranceMaps An ArrayList with the Map<String, Integer> occuranceMaps of every single article
+     * @return a Map containing the word as key and the TFIDF as value
+     * @author Fichte
+     * Method to get the filler words.
+     */
+
     public Map<String, Double> TFIDF(ArrayList<Map<String, Integer>> AllWordOccuranceMaps) {
         Map<String, Integer> firstMap = AllWordOccuranceMaps.get(0);
         Map<String, Integer> amountItAppears = new HashMap<>();
@@ -265,6 +281,12 @@ class TextAnalyzer implements Analyzer {
 
         return result;
 }
+
+    /**
+     * @return a ArrayList containing several filler texts.
+     * @author Fichte
+     * Method to get filler article out of the TFIDF_Training Text directory. This directory contains several textfiles with filler material.
+     */
     public ArrayList<String> getTFIDFFillerTexts() {
         Scanner x;
         String basePath = new File("").getAbsolutePath();

@@ -13,13 +13,17 @@ import javax.json.JsonArray;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
-/**
-*Class for text creation. The input parameter is a keyword. The artikelBeschaffung method searches in the given rss feeds for news which are containing the keyword.
-*@author Fichte
-*
-*/
+
 class FeedParser implements FeedParserInterface {
 
+    /**
+     * @param source the url String of a news website, set in the configuration
+     * @param keywords keywords String [] which the text should contain set in the configuration
+     * @return Following JsonArray {["ressource:"", "title": "", "paragraph":[{"tags":[], "content":""}]}
+     * @author Fichte
+     * Method to get articles of a website.
+     *
+     */
     public JsonArray getTexts(String source, String[] keywords) {
         final String fullFeed = "https://www.freefullrss.com/feed.php?url=";
         final String fullFeedOptions = "&max=20&links=preserve&exc=&submit=Create+Full+Text+RSS";
@@ -59,6 +63,14 @@ class FeedParser implements FeedParserInterface {
         return articles.build();
     }
 
+
+    /**
+     * @param article the String of an article to get cut
+     * @return the cutted article as String
+     * @author Fichte
+     * Replace the tags and \n of an article
+     *
+     */
     private String articleCutter(String article) { //class to cut the meta information from the reference articles
         article = article.replaceAll("SyndContentImpl.*" , "");
         article = article.replaceAll("\\<.*?>","");
@@ -67,6 +79,13 @@ class FeedParser implements FeedParserInterface {
         return article;
     }
 
+    /**
+     * @param news the cutted Article as String
+     * @param title the title of an article as String
+     * @return a JsonObject of the structure
+     * @author Fichte
+     * JsonArray {["ressource:"", "title": "", "paragraph":[{"tags":[], "content":""}]}
+     */
     private JsonObject articleBuilder(String news, String title) { // Input are a JSON article, the news, and the headline
         JsonObjectBuilder article = Json.createObjectBuilder();
 
