@@ -191,8 +191,8 @@ class TextAnalyzer implements Analyzer {
             JsonObject temp = article.getJsonObject(i);
             for (int j = 0; j < temp.size(); j++) {
                 json = article.toString();
-                json =json.replaceAll("\\{\\[","");
-                json = json.replaceAll("]}","");
+                json =json.replaceAll("\\[\\{","");
+                json = json.replaceAll("}]","");
                 String [] tempArray = json.split("\\r?\\n");
                 listOfParagraphs = new ArrayList<String>(Arrays.asList(tempArray));
             }
