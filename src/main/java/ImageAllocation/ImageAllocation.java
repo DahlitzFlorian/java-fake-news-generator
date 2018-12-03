@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -33,8 +32,8 @@ public class ImageAllocation extends ArrayList<Element> {
      * @param keywords Keywords an image is classified as
      */
 	public void getImage(String path, String[] keywords) throws IOException {
-		int counter = 0;
-        URL imageUrl = null;
+		int counter;
+        URL imageUrl;
 
         imageUrl = new URL(this.searchImage(String.join(" ", keywords)));
 
@@ -46,6 +45,7 @@ public class ImageAllocation extends ArrayList<Element> {
 				imageWriterOutput.write(counter);
 			}
 		} catch(IOException ioe) {
+		    System.out.println("Error: " + ioe.getMessage());
 		    throw ioe;
         }
 	}
@@ -54,15 +54,15 @@ public class ImageAllocation extends ArrayList<Element> {
      * Uses the google search api to return a url to an image meeting the requirements specified
      * by the keywords.
      *
-     * @param keyword Keywords an image is classified as
+     * @param keywords Keywords an image is classified as
      * @return String representing the images url
      */
-	private String searchImage(String keyword) {
+	private String searchImage(String keywords) {
 		int randomNumber = 10;
 		String imageUrl = "";
 
 		try {
-			String url = "https://www.google.com/search?tbm=isch&q=" + keyword;
+			String url = "https://www.google.com/search?tbm=isch&q=" + keywords;
 			Document jsoupDocument = Jsoup.connect(url)
 					.userAgent("\"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0\"")
 					.timeout(10 * 1000).get();
