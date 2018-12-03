@@ -19,12 +19,21 @@ import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
 /**
-*Class for text creation. The input parameter is a keyword. The artikelBeschaffung method searches in the given rss feeds for news which are containing the keyword.
-*@author Fichte
-*
-*/
+ * Class-based representation of a feed parser
+ *
+ * @author Fichte
+ */
 class FeedParser implements FeedParserInterface {
 
+    /**
+     * Iterates over a given feed and searches for articles meeting the requirements specified
+     * by the keywords. An article meets the requirements if at least one keyword is part of the
+     * articles categories or if the articles content contains at least n - 1 keywords.
+     *
+     * @param source Source to get articles from
+     * @param keywords Required words to match users input
+     * @return JsonArray of articles as JsonObjects
+     */
     public JsonArray getTexts(String source, String[] keywords) {
         final String fullFeed = "https://www.freefullrss.com/feed.php?url=";
         final String fullFeedOptions = "&max=20&links=preserve&exc=&submit=Create+Full+Text+RSS";
@@ -61,7 +70,7 @@ class FeedParser implements FeedParserInterface {
                 }
 
                 if(containsOne || keywordsInArticle + 1 == keywords.length)
-                    articles.add(this.articleBuilder(feedEntry.getLink(), headline, news)); //Call method to build return JSON
+                    articles.add(this.articleBuilder(feedEntry.getLink(), headline, news));
             }
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
@@ -70,6 +79,14 @@ class FeedParser implements FeedParserInterface {
         return articles.build();
     }
 
+    /**
+     * Builds an article object meeting the project requirements.
+     *
+     * @param resource Url of the original article
+     * @param title String representing the articles title
+     * @param content JsonArray containing the contents paragraphs
+     * @return JsonObject representing an article
+     */
     private JsonObject articleBuilder(String resource, String title, String content) {
         JsonObjectBuilder article = Json.createObjectBuilder();
         JsonArrayBuilder  tags = Json.createArrayBuilder();

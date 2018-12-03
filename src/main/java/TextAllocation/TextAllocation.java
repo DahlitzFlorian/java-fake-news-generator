@@ -11,6 +11,15 @@ import java.util.List;
 
 public class TextAllocation {
 
+    /**
+     * Looks for available feeds and uses them to find articles containing the specified keywords
+     * of those, which have been categorised with least one keyword. If no feed is available,
+     * spider and crawler are used.
+     *
+     * @param keywords Keywords an articles has to be categorised as or contain
+     * @param sources Sources to be searched
+     * @return JsonArray containing articles as JsonObjects
+     */
     public JsonArray getTexts(String[] keywords, List<String> sources) {
         JsonArrayBuilder texts = Json.createArrayBuilder();
         for(String source : sources) {
@@ -38,6 +47,12 @@ public class TextAllocation {
         return texts.build();
     }
 
+    /**
+     * Takes an url and searches for available feeds and returns them.
+     *
+     * @param source Source to search for available feeds
+     * @return List<String> of available feeds
+     */
     private List<String> getFeedUrls(String source) {
         List<String> feedUrls = new ArrayList<>();
         try {
