@@ -36,12 +36,12 @@ class FeedParser implements FeedParserInterface {
 
         try {
             URL feedUrl = new URL(source);
-            SyndFeedInput feedInput = new SyndFeedInput(); //create a Feed input
-            SyndFeed newsFeed = feedInput.build(new XmlReader(feedUrl)); //Build reader for the RSSFeed
+            SyndFeedInput feedInput = new SyndFeedInput();
+            SyndFeed newsFeed = feedInput.build(new XmlReader(feedUrl));
 
             for(SyndEntry feedEntry : newsFeed.getEntries()) {
-                news = feedEntry.getDescription().toString(); //Receiving the reference article
-                headline = feedEntry.getTitle(); //Receiving the headling
+                news = feedEntry.getDescription().getValue();
+                headline = feedEntry.getTitle();
                 List<String> tags = new ArrayList<>();
 
                 for(SyndCategory tag : feedEntry.getCategories())
@@ -59,7 +59,7 @@ class FeedParser implements FeedParserInterface {
                 }
 
                 if(containsOne || keywordsInArticle + 1 == keywords.length)
-                    articles.add(this.articleBuilder(feedEntry.getLink(), headline)); //Call method to build return JSON
+                    articles.add(this.articleBuilder(feedEntry.getLink(), headline, news)); //Call method to build return JSON
             }
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
@@ -68,20 +68,15 @@ class FeedParser implements FeedParserInterface {
         return articles.build();
     }
 
-    private JsonObject articleBuilder(String resource, String title) { // Input are a JSON article, the news, and the headline
+    private JsonObject articleBuilder(String resource, String title, String content) {
         JsonObjectBuilder article = Json.createObjectBuilder();
 
-        JsonObjectBuilder paragraphObject = Json.createObjectBuilder();
-        JsonArrayBuilder paragraphArray = Json.createArrayBuilder();
-        JsonArrayBuilder  tags = Json.createArrayBuilder(); //empty JSON array for tags
+        JsonArrayBuilder  tags = Json.createArrayBuilder();
 
-        paragraphObject.add("tags", tags.build()); //tags are added in the Textanalyse
-        paragraphObject.add("content", "");
-        paragraphArray.add(paragraphObject.build());
-
-        article.add("resource", resource); //each reference article is a ressource
+        article.add("resource", resource);
         article.add("title", title);
-        article.add( "paragraph", paragraphArray.build());
+        article.add("tags", tags.build());
+        article.add( "content", content);
 
         return article.build();
     }
