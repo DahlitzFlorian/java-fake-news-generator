@@ -84,7 +84,7 @@ class FeedParser implements FeedParserInterface {
         }
 
         for(String paragraph : tagValues)
-            paragraphs.add(paragraph);
+            paragraphs.add(paragraph.replaceAll("\\<.*?>",""));
 
         article.add("resource", resource);
         article.add("title", title);
