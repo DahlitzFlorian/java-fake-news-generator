@@ -3,6 +3,8 @@ package TextAllocation;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.rometools.rome.feed.synd.SyndCategory;
 import com.rometools.rome.feed.synd.SyndFeed;
@@ -70,13 +72,24 @@ class FeedParser implements FeedParserInterface {
 
     private JsonObject articleBuilder(String resource, String title, String content) {
         JsonObjectBuilder article = Json.createObjectBuilder();
-
         JsonArrayBuilder  tags = Json.createArrayBuilder();
+        JsonArrayBuilder paragraphs = Json.createArrayBuilder();
+
+        final Pattern TAG_REGEX = Pattern.compile("<p>(.+?)</p>", Pattern.DOTALL);
+
+        final List<String> tagValues = new ArrayList<>();
+        final Matcher matcher = TAG_REGEX.matcher(content);
+        while (matcher.find()) {
+            tagValues.add(matcher.group(1));
+        }
+
+        for(String paragraph : tagValues)
+            paragraphs.add(paragraph);
 
         article.add("resource", resource);
         article.add("title", title);
         article.add("tags", tags.build());
-        article.add( "content", content);
+        article.add( "content", paragraphs.build());
 
         return article.build();
     }
