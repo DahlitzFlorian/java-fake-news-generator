@@ -32,17 +32,11 @@ public class ImageAllocation extends ArrayList<Element> {
      * @param path Path to the articles directory
      * @param keywords Keywords an image is classified as
      */
-	public void getImage(String path, String[] keywords) {
+	public void getImage(String path, String[] keywords) throws IOException {
 		int counter = 0;
         URL imageUrl = null;
 
-        try {
-            imageUrl = new URL(this.searchImage(String.join(" ", keywords)));
-        } catch(MalformedURLException mue) {
-		    System.out.println("Error: " + mue.getMessage());
-
-		    return;
-        }
+        imageUrl = new URL(this.searchImage(String.join(" ", keywords)));
 
 		try (InputStream imageReaderInput = new BufferedInputStream(imageUrl.openStream());
              OutputStream imageWriterOutput = new BufferedOutputStream(
@@ -52,7 +46,7 @@ public class ImageAllocation extends ArrayList<Element> {
 				imageWriterOutput.write(counter);
 			}
 		} catch(IOException ioe) {
-		    System.out.println("Error: " + ioe.getMessage());
+		    throw ioe;
         }
 	}
 
@@ -66,6 +60,7 @@ public class ImageAllocation extends ArrayList<Element> {
 	private String searchImage(String keyword) {
 		int randomNumber = 10;
 		String imageUrl = "";
+
 		try {
 			String url = "https://www.google.com/search?tbm=isch&q=" + keyword;
 			Document jsoupDocument = Jsoup.connect(url)

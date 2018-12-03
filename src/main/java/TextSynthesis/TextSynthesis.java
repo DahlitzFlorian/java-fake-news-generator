@@ -22,7 +22,8 @@ public class TextSynthesis {
     //private MarkovChain markovChain = new MarkovChain(null, 2, 500);
     private enum StatusCodes {
         SUCCESS("2000 - Successful"),
-        FAILED_ON_CONFIGURATION("3000 - Failed to load configuration");
+        FAILED_ON_CONFIGURATION("3000 - Failed to load configuration"),
+        FAILED_ON_IMAGE_ALLOCATION("4000 - Failed to download an image for the article");
 
         private final String text;
 
@@ -65,7 +66,13 @@ public class TextSynthesis {
         String finalDirectory = this.save(result[0], result[1]);
 
         ImageAllocation imageAllocation = new ImageAllocation();
-        imageAllocation.getImage(finalDirectory, keywords);
+
+        try {
+            imageAllocation.getImage(finalDirectory, keywords);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return StatusCodes.FAILED_ON_IMAGE_ALLOCATION.getCode();
+        }
 
         return StatusCodes.SUCCESS.getCode();
     }
