@@ -17,8 +17,8 @@ import javax.json.JsonReader;
  * where they're)
  *
  * @author Huber
+ * @reviewed Dahlitz
  */
-
 class TextAnalyzer implements Analyzer {
     JsonArray mJsonArray;
 
@@ -104,7 +104,6 @@ class TextAnalyzer implements Analyzer {
      *
      * @author Fichte
      */
-
     private Map<String, Integer> searchNominal(JsonArray article) {
         Map<String, Integer> nominalCounter = new HashMap<>();
         int tempNumber;
@@ -133,7 +132,6 @@ class TextAnalyzer implements Analyzer {
      *
      * @author Fichte
      */
-
     private Map<String, Integer> getMostFrequentlyNominals(Map<String, Integer> nominals) {
         Map<String, Integer> mostFrequentlyUsed;
         int amountOfElements = nominals.size();
@@ -182,6 +180,7 @@ class TextAnalyzer implements Analyzer {
         }
         return wordOccurrence;
     }
+
 	public Map<String, Double> TFIDF(ArrayList<Map<String, Integer>> AllWordOccuranceMaps) {
 		Map<String, Integer> firstMap = AllWordOccuranceMaps.get(0);
 		Map<String, Integer> amountItAppears= new HashMap<>();

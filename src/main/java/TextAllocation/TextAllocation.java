@@ -9,6 +9,11 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class-based representation of the text allocation component
+ *
+ * @author Dahlitz
+ */
 public class TextAllocation {
 
     /**

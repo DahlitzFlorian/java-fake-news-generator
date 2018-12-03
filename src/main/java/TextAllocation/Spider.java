@@ -9,6 +9,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Class-based representation of a spider
+ *
+ * @author Dahlitz
+ */
 public class Spider {
 
     private static final int MAX_PAGES = 10;

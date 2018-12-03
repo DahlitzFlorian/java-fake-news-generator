@@ -2,6 +2,11 @@ package TextAllocation;
 
 import javax.json.JsonArray;
 
+/**
+ * Interface for a feed parser
+ *
+ * @author Dahlitz
+ */
 public interface FeedParserInterface {
 
     /**

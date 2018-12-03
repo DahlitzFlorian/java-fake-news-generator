@@ -22,6 +22,7 @@ import javax.json.JsonObjectBuilder;
  * Class-based representation of a feed parser
  *
  * @author Fichte
+ * @reviewed Dahlitz
  */
 class FeedParser implements FeedParserInterface {
 

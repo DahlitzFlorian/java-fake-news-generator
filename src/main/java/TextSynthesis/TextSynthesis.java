@@ -13,6 +13,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Class-based representation of the text synthesis component
+ *
+ * @author Dahlitz
+ */
 public class TextSynthesis {
     //private MarkovChain markovChain = new MarkovChain(null, 2, 500);
     private enum StatusCodes {
@@ -30,6 +35,12 @@ public class TextSynthesis {
         }
     }
 
+    /**
+     * Handles the main control flow of the whole software.
+     *
+     * @param keywords Keywords the generated article can be classified by
+     * @return String representing a status code
+     */
     public String createArticle(String[] keywords) {
 
         Configuration config = new Configuration();
@@ -65,12 +76,13 @@ public class TextSynthesis {
         return result;
     }
 
-    public static void main(String[] args) {
-        TextSynthesis textSynthesis = new TextSynthesis();
-        String[] keywords = {"Politik", "usa"};
-        textSynthesis.createArticle(keywords);
-    }
-
+    /**
+     * Saves an article as a text-file to a newly created directory in the softwares root directory.
+     *
+     * @param headline Articles title
+     * @param article Articles content
+     * @return String representing the path to the articles directory
+     */
     public String save(String headline, String article) {
         File finalDirectory = new File(headline);
         finalDirectory.mkdir();

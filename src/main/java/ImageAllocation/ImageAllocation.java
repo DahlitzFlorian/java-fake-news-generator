@@ -17,12 +17,21 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 /**
+ * Class-based representation of the image allocation component
+ *
  * @author Huber
+ * @reviewed Dahlitz
  */
 public class ImageAllocation extends ArrayList<Element> {
 
 	private static final long serialVersionUID = 1L;
 
+    /**
+     * Downloads an image and saves it to the articles directory.
+     *
+     * @param path Path to the articles directory
+     * @param keywords Keywords an image is classified as
+     */
 	public void getImage(String path, String[] keywords) {
 		int counter = 0;
         URL imageUrl = null;
@@ -47,6 +56,13 @@ public class ImageAllocation extends ArrayList<Element> {
         }
 	}
 
+    /**
+     * Uses the google search api to return a url to an image meeting the requirements specified
+     * by the keywords.
+     *
+     * @param keyword Keywords an image is classified as
+     * @return String representing the images url
+     */
 	private String searchImage(String keyword) {
 		int randomNumber = 10;
 		String imageUrl = "";
