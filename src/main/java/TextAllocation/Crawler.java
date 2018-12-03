@@ -6,8 +6,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.nodes.Document;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,10 +13,15 @@ import java.util.List;
 public class Crawler {
 
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.112 Safari/535.1";
-    private List<String> links = new LinkedList<String>();
+    private List<String> links = new LinkedList<>();
     private Document htmlDocument;
 
-    // Give it a URL and it makes an HTTP request for a web page
+    /**
+     * Takes a url and searches for further useful links and adds them to the queue if existing.
+     *
+     * @param url Search for further links
+     * @return True if further links were found
+     */
     boolean crawl(String url) {
 
         try {
@@ -48,7 +51,12 @@ public class Crawler {
         }
     }
 
-    // Tries to find a word on the page
+    /**
+     * Searches for keywords on the web pages.
+     *
+     * @param keywords Keywords to search for
+     * @return True if the web page contains the specified keywords
+     */
     boolean searchForWord(String[] keywords) {
         if(this.htmlDocument == null) {
             System.out.println("ERROR! Call crawl() before performing analysis on the document");
@@ -64,7 +72,11 @@ public class Crawler {
         return true;
     }
 
-    // Returns a list of all the URLs on the page
+    /**
+     * Returns all the links, which were found.
+     *
+     * @return List<String> of links that were found
+     */
     List<String> getLinks() {
         return this.links;
     }

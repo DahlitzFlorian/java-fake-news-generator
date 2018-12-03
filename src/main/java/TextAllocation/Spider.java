@@ -35,9 +35,11 @@ public class Spider {
     }
 
     /**
+     * Marks the entry point of the spider. Starts at a given base url
+     * and searches for content containing the specified keywords.
      *
-     * @param baseUrl
-     * @param keywords
+     * @param baseUrl Entry point for the spider
+     * @param keywords Keywords a content needs to match
      */
     public JsonArray search(String baseUrl, String[] keywords) {
 
