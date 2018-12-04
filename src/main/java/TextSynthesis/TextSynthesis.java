@@ -7,11 +7,13 @@ import TextClassification.TextClassification;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Class-based representation of the text synthesis component
@@ -78,8 +80,51 @@ public class TextSynthesis {
     }
 
     private String[] synthesise(JsonArray analyzedTexts) {
-        String[] result = {"", ""};
+        Configuration configuration = new Configuration();
+        StringBuilder corpusBuilder = new StringBuilder();
+        StringBuilder keyWordsBuilder = new StringBuilder();
+        Random random = new Random();
+        int length;
+        int articleCount = analyzedTexts.size();
+        int randomTitleNumber = random.nextInt(articleCount);
+        int i = 0;
+        String corpus;
+        String[] keywords;
+        String[] titles = new String[articleCount];
 
+        for (JsonValue articleJson : analyzedTexts) {
+            JsonArray content = articleJson.asJsonObject().getJsonArray("content");
+            JsonArray tags = articleJson.asJsonObject().getJsonArray("tags");
+            String title = articleJson.asJsonObject().getString("title");
+            titles[i++] = title.replaceAll("[\\\"?<>*:/|]", "");
+            for (JsonValue paragraph : content) {
+                String paragraphAsString = paragraph.toString();
+                paragraphAsString = paragraphAsString.substring(1,paragraphAsString.length()-1);
+                corpusBuilder.append(paragraphAsString);
+                corpusBuilder.append(" ");
+            }
+            for (JsonValue tag : tags) {
+                String tagAsString = tag.toString();
+                tagAsString = tagAsString.replaceAll("\"", "");
+                keyWordsBuilder.append(tagAsString);
+                keyWordsBuilder.append(",");
+            }
+        }
+
+        corpus = corpusBuilder.toString();
+        keywords = keyWordsBuilder.toString().split(",");
+        try {
+            length = configuration.getTextConfigurations().getInt("max");
+        } catch (IOException e) {
+            return null;
+        }
+
+        MarkovChain markovChain = new MarkovChain(corpus, 3, length, keywords);
+        System.out.println(titles[randomTitleNumber]);
+
+        String[] result = {titles[randomTitleNumber], markovChain.markovify()};
+
+        System.out.println(result[1]);
         return result;
     }
 

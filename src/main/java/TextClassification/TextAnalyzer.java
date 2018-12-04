@@ -154,7 +154,7 @@ class TextAnalyzer implements Analyzer {
      * Method to split a corpus of text into each of its words either removing punctuation
      * or not
      */
-    private String[] splitWords(String corpus, boolean punctuation) {
+    String[] splitWords(String corpus, boolean punctuation) {
         if (punctuation)
             return corpus.replaceAll("\\p{Punct}", "").split("\\s");
         else
@@ -168,7 +168,7 @@ class TextAnalyzer implements Analyzer {
      * Method to count how many times a word occures in an array of words
      * For this method to work each entry in the array must be a single word
      */
-    private Map<String, Integer> wordOccurrence(String[] wordList) {
+    Map<String, Integer> wordOccurrence(String[] wordList) {
         Map<String, Integer> wordOccurrence = new HashMap<>();
         for (String word : wordList) {
             if (!wordOccurrence.containsKey(word)) {
@@ -181,19 +181,19 @@ class TextAnalyzer implements Analyzer {
         return wordOccurrence;
     }
 
-	public Map<String, Double> TFIDF(ArrayList<Map<String, Integer>> AllWordOccuranceMaps) {
-		Map<String, Integer> firstMap = AllWordOccuranceMaps.get(0);
+	Map<String, Double> TFIDF(List<Map<String, Integer>> AllWordOccurrenceMaps) {
+		Map<String, Integer> firstMap = AllWordOccurrenceMaps.get(0);
 		Map<String, Integer> amountItAppears= new HashMap<>();
 
 		Map<String, Double> result = new HashMap<>();
 		double amountWordsArticle1 = firstMap.size();
-		double amountArticles = AllWordOccuranceMaps.size();
+		double amountArticles = AllWordOccurrenceMaps.size();
 		for(String word : firstMap.keySet()){
 			amountItAppears.put(word, 0);
 		}
 
 
-		for (Map<String, Integer> Maps : AllWordOccuranceMaps) {
+		for (Map<String, Integer> Maps : AllWordOccurrenceMaps) {
 			for (String word1 : Maps.keySet()) {
 				if (firstMap.keySet().contains(word1)) {
 					amountItAppears.put(word1, amountItAppears.get(word1)+1);
@@ -208,9 +208,53 @@ class TextAnalyzer implements Analyzer {
 			double resultdivider = Math.log(amountArticles/tempDouble );
 			double tempresult = denominator*resultdivider;
 			result.put(word2, tempresult);
-
 		}
-
 		return result;
 	}
+
+    /**
+     * @return a ArrayList containing several filler texts.
+     * @author Fichte
+     * Method to get filler article out of the TFIDF_Training Text directory. This directory contains several textfiles with filler material.
+     */
+    List<String> getTFIDFFillerTexts() {
+        Scanner x;
+        ArrayList<String> fillerTexts = new ArrayList<>();
+        ArrayList<Integer> noDuplicates = new ArrayList<>();
+        Random textIndex = new Random();
+        ArrayList<String> tempText = new ArrayList<>();
+        int tempTextSize = 0;
+        int randomNumber;
+        for (int i = 0; i < 10; i++) {
+            randomNumber = textIndex.nextInt(44);
+            if (!noDuplicates.contains(randomNumber)) {
+                String textName = "text" + randomNumber + ".txt";
+                try {
+
+                    x = new Scanner(getClass().getClassLoader().getResourceAsStream("./training_texts/" + textName));
+
+                } catch (Exception e) {
+                    return null;
+                }
+                while (x.hasNext() && tempTextSize != 1000) {
+
+                    tempText.add(x.next());
+                    tempTextSize ++;
+
+                }
+                String fillerText = tempText.subList(0, tempTextSize).toString();
+                tempText.clear();
+                fillerText = fillerText.replaceAll(",", "");
+                fillerTexts.add(fillerText);
+                noDuplicates.add(randomNumber);
+                tempTextSize = 0;
+                x.close();
+            }
+            else{
+                i--;
+            }
+        }
+        return fillerTexts;
+    }
+
 }

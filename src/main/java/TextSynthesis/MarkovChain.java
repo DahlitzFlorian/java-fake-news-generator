@@ -70,10 +70,8 @@ class MarkovChain {
         }
         int index = rnd.nextInt(totalSum);
         if (index == 0) index = 1;
-        System.out.println("index: " + index + " totalSum: " + totalSum);
         int sum = 0;
         String[] keySetAsString = keySet.toArray(new String[keySet.size()]);
-        System.out.println(Arrays.toString(keySetAsString));
         int i = 0;
         while (sum < index) {
             sum += probabilities.get(keySetAsString[i++]);
@@ -108,7 +106,11 @@ class MarkovChain {
 
     //TODO make this work for different orders, only works for order 2. Or implement a better method
     private String arrayToString(String[] array) {
-        return Arrays.toString(array).replace("[", "").replace("]", "").replaceFirst(",", "");
+        String temp = Arrays.toString(array).replace("[", "").replace("]", "");
+        for(int i = 1; i < order; i++) {
+            temp = temp.replaceFirst(",", "");
+        }
+        return temp;
     }
 
     //TODO implement this
