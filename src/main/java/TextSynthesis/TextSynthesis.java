@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.List;
 
 public class TextSynthesis {
-    //private MarkovChain markovChain = new MarkovChain(null, 2, 500);
     private enum StatusCodes {
         SUCCESS("2000 - Successful"),
         FAILED_ON_CONFIGURATION("3000 - Failed to load configuration");
@@ -54,7 +53,7 @@ public class TextSynthesis {
         String finalDirectory = this.save(result[0], result[1]);
 
         ImageAllocation imageAllocation = new ImageAllocation();
-        imageAllocation.getImage(finalDirectory, keywords);
+        imageAllocation.getImage(finalDirectory);
 
         return StatusCodes.SUCCESS.getCode();
     }

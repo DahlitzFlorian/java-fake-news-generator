@@ -14,6 +14,7 @@ public class TextAllocation {
     public JsonArray getTexts(String[] keywords, List<String> sources) {
         JsonArrayBuilder texts = Json.createArrayBuilder();
         for(String source : sources) {
+            source = source.replaceAll("\"", "");
             List<String> feedUrls = this.getFeedUrls(source);
 
             if(feedUrls.size() != 0) {
@@ -27,7 +28,7 @@ public class TextAllocation {
                 }
             }
             else {
-                Spider spider = new Spider();
+               Spider spider = new Spider();
                 for(JsonValue value : spider.search(source, keywords)) {
                     JsonObject text = (JsonObject) value;
                     texts.add(text);
