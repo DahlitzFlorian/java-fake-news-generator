@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -17,23 +16,26 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 /**
+ * Class-based representation of the image allocation component
+ *
  * @author Huber
+ * @reviewed Dahlitz
  */
 public class ImageAllocation extends ArrayList<Element> {
 
 	private static final long serialVersionUID = 1L;
 
-	public void getImage(String path, String[] keywords) {
-		int counter = 0;
-        URL imageUrl = null;
+    /**
+     * Downloads an image and saves it to the articles directory.
+     *
+     * @param path Path to the articles directory
+     * @param keywords Keywords an image is classified as
+     */
+	public void getImage(String path, String[] keywords) throws IOException {
+		int counter;
+        URL imageUrl;
 
-        try {
-            imageUrl = new URL(this.searchImage(String.join(" ", keywords)));
-        } catch(MalformedURLException mue) {
-		    System.out.println("Error: " + mue.getMessage());
-
-		    return;
-        }
+        imageUrl = new URL(this.searchImage(String.join(" ", keywords)));
 
 		try (InputStream imageReaderInput = new BufferedInputStream(imageUrl.openStream());
              OutputStream imageWriterOutput = new BufferedOutputStream(
@@ -44,14 +46,23 @@ public class ImageAllocation extends ArrayList<Element> {
 			}
 		} catch(IOException ioe) {
 		    System.out.println("Error: " + ioe.getMessage());
+		    throw ioe;
         }
 	}
 
-	private String searchImage(String keyword) {
+    /**
+     * Uses the google search api to return a url to an image meeting the requirements specified
+     * by the keywords.
+     *
+     * @param keywords Keywords an image is classified as
+     * @return String representing the images url
+     */
+	private String searchImage(String keywords) {
 		int randomNumber = 10;
 		String imageUrl = "";
+
 		try {
-			String url = "https://www.google.com/search?tbm=isch&q=" + keyword;
+			String url = "https://www.google.com/search?tbm=isch&q=" + keywords;
 			Document jsoupDocument = Jsoup.connect(url)
 					.userAgent("\"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0\"")
 					.timeout(10 * 1000).get();

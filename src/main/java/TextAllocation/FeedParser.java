@@ -3,6 +3,8 @@ package TextAllocation;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.rometools.rome.feed.synd.SyndCategory;
 import com.rometools.rome.feed.synd.SyndFeed;
@@ -17,12 +19,22 @@ import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
 /**
-*Class for text creation. The input parameter is a keyword. The artikelBeschaffung method searches in the given rss feeds for news which are containing the keyword.
-*@author Fichte
-*
-*/
+ * Class-based representation of a feed parser
+ *
+ * @author Fichte
+ * @reviewed Dahlitz
+ */
 class FeedParser implements FeedParserInterface {
 
+    /**
+     * Iterates over a given feed and searches for articles meeting the requirements specified
+     * by the keywords. An article meets the requirements if at least one keyword is part of the
+     * articles categories or if the articles content contains at least n - 1 keywords.
+     *
+     * @param source Source to get articles from
+     * @param keywords Required words to match users input
+     * @return JsonArray of articles as JsonObjects
+     */
     public JsonArray getTexts(String source, String[] keywords) {
         final String fullFeed = "https://www.freefullrss.com/feed.php?url=";
         final String fullFeedOptions = "&max=20&links=preserve&exc=&submit=Create+Full+Text+RSS";
@@ -36,12 +48,12 @@ class FeedParser implements FeedParserInterface {
 
         try {
             URL feedUrl = new URL(source);
-            SyndFeedInput feedInput = new SyndFeedInput(); //create a Feed input
-            SyndFeed newsFeed = feedInput.build(new XmlReader(feedUrl)); //Build reader for the RSSFeed
+            SyndFeedInput feedInput = new SyndFeedInput();
+            SyndFeed newsFeed = feedInput.build(new XmlReader(feedUrl));
 
             for(SyndEntry feedEntry : newsFeed.getEntries()) {
-                news = feedEntry.getDescription().toString(); //Receiving the reference article
-                headline = feedEntry.getTitle(); //Receiving the headling
+                news = feedEntry.getDescription().getValue();
+                headline = feedEntry.getTitle();
                 List<String> tags = new ArrayList<>();
 
                 for(SyndCategory tag : feedEntry.getCategories())
@@ -59,7 +71,7 @@ class FeedParser implements FeedParserInterface {
                 }
 
                 if(containsOne || keywordsInArticle + 1 == keywords.length)
-                    articles.add(this.articleBuilder(feedEntry.getLink(), headline)); //Call method to build return JSON
+                    articles.add(this.articleBuilder(feedEntry.getLink(), headline, news));
             }
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
@@ -68,20 +80,34 @@ class FeedParser implements FeedParserInterface {
         return articles.build();
     }
 
-    private JsonObject articleBuilder(String resource, String title) { // Input are a JSON article, the news, and the headline
+    /**
+     * Builds an article object meeting the project requirements.
+     *
+     * @param resource Url of the original article
+     * @param title String representing the articles title
+     * @param content JsonArray containing the contents paragraphs
+     * @return JsonObject representing an article
+     */
+    private JsonObject articleBuilder(String resource, String title, String content) {
         JsonObjectBuilder article = Json.createObjectBuilder();
+        JsonArrayBuilder  tags = Json.createArrayBuilder();
+        JsonArrayBuilder paragraphs = Json.createArrayBuilder();
 
-        JsonObjectBuilder paragraphObject = Json.createObjectBuilder();
-        JsonArrayBuilder paragraphArray = Json.createArrayBuilder();
-        JsonArrayBuilder  tags = Json.createArrayBuilder(); //empty JSON array for tags
+        final Pattern TAG_REGEX = Pattern.compile("<p>(.+?)</p>", Pattern.DOTALL);
 
-        paragraphObject.add("tags", tags.build()); //tags are added in the Textanalyse
-        paragraphObject.add("content", "");
-        paragraphArray.add(paragraphObject.build());
+        final List<String> tagValues = new ArrayList<>();
+        final Matcher matcher = TAG_REGEX.matcher(content);
+        while (matcher.find()) {
+            tagValues.add(matcher.group(1));
+        }
 
-        article.add("resource", resource); //each reference article is a ressource
+        for(String paragraph : tagValues)
+            paragraphs.add(paragraph.replaceAll("\\<.*?>",""));
+
+        article.add("resource", resource);
         article.add("title", title);
-        article.add( "paragraph", paragraphArray.build());
+        article.add("tags", tags.build());
+        article.add( "content", paragraphs.build());
 
         return article.build();
     }

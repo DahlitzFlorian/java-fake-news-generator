@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 
 /**
  * @author Leuschner
+ * @reviewed Dahlitz
  */
 
 public class ControllerMainWindow {
