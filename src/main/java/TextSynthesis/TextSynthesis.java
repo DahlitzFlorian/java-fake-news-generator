@@ -19,9 +19,10 @@ import java.util.Random;
  * Class-based representation of the text synthesis component
  *
  * @author Dahlitz
+ * @reviewed Leuschner
  */
 public class TextSynthesis {
-    //private MarkovChain markovChain = new MarkovChain(null, 2, 500);
+
     private enum StatusCodes {
         SUCCESS("2000 - Successful"),
         FAILED_ON_CONFIGURATION("3000 - Failed to load configuration"),
@@ -47,7 +48,7 @@ public class TextSynthesis {
     public String createArticle(String[] keywords) {
 
         Configuration config = new Configuration();
-        JsonObject textConfig = null;
+        JsonObject textConfig;
 
         try {
             textConfig = config.getTextConfigurations();
@@ -84,25 +85,30 @@ public class TextSynthesis {
         StringBuilder corpusBuilder = new StringBuilder();
         StringBuilder keyWordsBuilder = new StringBuilder();
         Random random = new Random();
+
         int length;
         int articleCount = analyzedTexts.size();
         int randomTitleNumber = random.nextInt(articleCount);
         int i = 0;
+
         String corpus;
         String[] keywords;
         String[] titles = new String[articleCount];
 
         for (JsonValue articleJson : analyzedTexts) {
-            JsonArray content = articleJson.asJsonObject().getJsonArray("content");
-            JsonArray tags = articleJson.asJsonObject().getJsonArray("tags");
-            String title = articleJson.asJsonObject().getString("title");
+            JsonObject article = articleJson.asJsonObject();
+            JsonArray content = article.getJsonArray("content");
+            JsonArray tags = article.getJsonArray("tags");
+            String title = article.getString("title");
             titles[i++] = title.replaceAll("[\\\"?<>*:/|]", "");
+
             for (JsonValue paragraph : content) {
                 String paragraphAsString = paragraph.toString();
                 paragraphAsString = paragraphAsString.substring(1,paragraphAsString.length()-1);
                 corpusBuilder.append(paragraphAsString);
                 corpusBuilder.append(" ");
             }
+
             for (JsonValue tag : tags) {
                 String tagAsString = tag.toString();
                 tagAsString = tagAsString.replaceAll("\"", "");
@@ -113,6 +119,7 @@ public class TextSynthesis {
 
         corpus = corpusBuilder.toString();
         keywords = keyWordsBuilder.toString().split(",");
+
         try {
             length = configuration.getTextConfigurations().getInt("max");
         } catch (IOException e) {
@@ -120,11 +127,8 @@ public class TextSynthesis {
         }
 
         MarkovChain markovChain = new MarkovChain(corpus, 3, length, keywords);
-        System.out.println(titles[randomTitleNumber]);
-
         String[] result = {titles[randomTitleNumber], markovChain.markovify()};
 
-        System.out.println(result[1]);
         return result;
     }
 
