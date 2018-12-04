@@ -8,6 +8,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * Class-based representation of the text allocation component
@@ -27,30 +29,44 @@ public class TextAllocation {
      */
     public JsonArray getTexts(String[] keywords, List<String> sources) {
         JsonArrayBuilder texts = Json.createArrayBuilder();
-        for(String source : sources) {
-            source = source.replaceAll("\"", "");
-            List<String> feedUrls = this.getFeedUrls(source);
 
-            if(feedUrls.size() != 0) {
-                FeedParser feedParser = new FeedParser();
+        CompletableFuture.allOf(sources.stream()
+                .map(source -> this.getPartsOfTexts(source, keywords, texts)).toArray(CompletableFuture[]::new));
 
-                for(String feedUrl : feedUrls) {
-                    for (JsonValue value : feedParser.getTexts(feedUrl, keywords)) {
-                        JsonObject text = (JsonObject) value;
-                        texts.add(text);
-                    }
-                }
-            }
-            else {
-               Spider spider = new Spider();
-                for(JsonValue value : spider.search(source, keywords)) {
+        return texts.build();
+    }
+
+    /**
+     * Represents a subroutine, which is been called asynchronous by the getTexts() method.
+     *
+     * @param source Source for articles
+     * @param keywords Keywords to search for
+     * @param texts Reference to the final articles array
+     * @return Void to check for completion
+     */
+    private CompletableFuture<Void> getPartsOfTexts(String source, String[] keywords, JsonArrayBuilder texts) {
+        source = source.replaceAll("\"", "");
+        List<String> feedUrls = this.getFeedUrls(source);
+
+        if(feedUrls.size() != 0) {
+            FeedParser feedParser = new FeedParser();
+
+            for(String feedUrl : feedUrls) {
+                for (JsonValue value : feedParser.getTexts(feedUrl, keywords)) {
                     JsonObject text = (JsonObject) value;
                     texts.add(text);
                 }
             }
         }
+        else {
+            Spider spider = new Spider();
+            for(JsonValue value : spider.search(source, keywords)) {
+                JsonObject text = (JsonObject) value;
+                texts.add(text);
+            }
+        }
 
-        return texts.build();
+        return CompletableFuture.completedFuture(null);
     }
 
     /**
