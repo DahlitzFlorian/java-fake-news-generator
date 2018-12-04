@@ -10,7 +10,10 @@ import java.io.OutputStream;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
+import TextSynthesis.TextSynthesis;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -31,23 +34,38 @@ public class ImageAllocation extends ArrayList<Element> {
      * @param path Path to the articles directory
      * @param keywords Keywords an image is classified as
      */
-	public void getImage(String path, String[] keywords) throws IOException {
+	public CompletableFuture<String> getImage(CompletableFuture<String> path, String[] keywords) {
 		int counter;
         URL imageUrl;
+        String pathToArticle;
 
-        imageUrl = new URL(this.searchImage(String.join(" ", keywords)));
+        try {
+            pathToArticle = path.get();
+        } catch(InterruptedException | ExecutionException ee) {
+            System.out.println("Error: " + ee.getMessage());
+            return CompletableFuture.completedFuture(TextSynthesis.StatusCodes.FAILED_ON_ARTICLE_PATH.getCode());
+        }
+
+        try {
+            imageUrl = new URL(this.searchImage(String.join(" ", keywords)));
+        } catch(IOException ioe) {
+            System.out.println("Error: " + ioe.getMessage());
+            return CompletableFuture.completedFuture(TextSynthesis.StatusCodes.FAILED_ON_IMAGE_URL.getCode());
+        }
 
 		try (InputStream imageReaderInput = new BufferedInputStream(imageUrl.openStream());
              OutputStream imageWriterOutput = new BufferedOutputStream(
-                     new FileOutputStream(path + File.separator + "image.jpg"))) {
+                     new FileOutputStream(pathToArticle + File.separator + "image.jpg"))) {
 
 			while ((counter = imageReaderInput.read()) != -1) {
 				imageWriterOutput.write(counter);
 			}
 		} catch(IOException ioe) {
 		    System.out.println("Error: " + ioe.getMessage());
-		    throw ioe;
+            return CompletableFuture.completedFuture(TextSynthesis.StatusCodes.FAILED_ON_IMAGE_ALLOCATION.getCode());
         }
+
+        return CompletableFuture.completedFuture("");
 	}
 
     /**

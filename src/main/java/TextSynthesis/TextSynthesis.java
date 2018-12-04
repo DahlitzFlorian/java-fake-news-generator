@@ -12,8 +12,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Class-based representation of the text synthesis component
@@ -23,10 +24,14 @@ import java.util.Random;
  */
 public class TextSynthesis {
 
-    private enum StatusCodes {
+    public enum StatusCodes {
         SUCCESS("2000 - Successful"),
         FAILED_ON_CONFIGURATION("3000 - Failed to load configuration"),
-        FAILED_ON_IMAGE_ALLOCATION("4000 - Failed to download an image for the article");
+        FAILED_ON_IMAGE_ALLOCATION("4000 - Failed to download an image for the article"),
+        FAILED_ON_ARTICLE_PATH("4100 - Failed to find the path to the article"),
+        FAILED_ON_IMAGE_URL("4200 - Failed to access the images url"),
+        FAILED_ON_ARTICLE_GENERATION("5000 - Failed to generate the article: Check your settings"),
+        FAILED_ON_ANALYSED_TEXTS("6000 - Failed to access the analysed texts");
 
         private final String text;
 
@@ -57,37 +62,55 @@ public class TextSynthesis {
             return StatusCodes.FAILED_ON_CONFIGURATION.getCode();
         }
 
-        List<String> sources = config.getSources(textConfig);
-
         TextAllocation textAllocation = new TextAllocation();
-        JsonArray unanalysedTexts = textAllocation.getTexts(keywords, sources);
-
         TextClassification textClassification = new TextClassification();
-        JsonArray analysedTexts = textClassification.getAnalysedTexts(unanalysedTexts);
-
-        String[] result = this.synthesise(analysedTexts);
-        String finalDirectory = this.save(result[0], result[1]);
-
         ImageAllocation imageAllocation = new ImageAllocation();
+        CompletableFuture<String> status = new CompletableFuture<>();
+
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> config.getSources(textConfig))
+                .thenApply((sources) -> textAllocation.getTexts(keywords, sources))
+                .thenApply(textClassification::getAnalysedTexts)
+                .thenApply(this::synthesise)
+                .thenApply(this::save)
+                .thenCompose((path) -> imageAllocation.getImage(path, keywords));
 
         try {
-            imageAllocation.getImage(finalDirectory, keywords);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-            return StatusCodes.FAILED_ON_IMAGE_ALLOCATION.getCode();
+            status.complete(future.get());
+
+            if(status.isDone()) {
+                if (status.get().equals(""))
+                    return StatusCodes.SUCCESS.getCode();
+                else if(status.get().equals(StatusCodes.FAILED_ON_ANALYSED_TEXTS.getCode()))
+                    return StatusCodes.FAILED_ON_ANALYSED_TEXTS.getCode();
+            }
+        } catch (InterruptedException | ExecutionException ee) {
+            System.out.println("Error: " + ee.getMessage());
+            return StatusCodes.FAILED_ON_ARTICLE_GENERATION.getCode();
         }
 
-        return StatusCodes.SUCCESS.getCode();
+
+
+        return StatusCodes.FAILED_ON_ARTICLE_GENERATION.getCode();
     }
 
-    private String[] synthesise(JsonArray analyzedTexts) {
+    private CompletableFuture<String[]> synthesise(CompletableFuture<JsonArray> analyzedTexts) {
+        JsonArray completedAnalyzedTexts;
+
+        try {
+            completedAnalyzedTexts = analyzedTexts.get();
+        } catch(InterruptedException | ExecutionException ee) {
+            System.out.println("Error: " + ee.getMessage());
+            String[] code = {StatusCodes.FAILED_ON_ANALYSED_TEXTS.getCode(), ""};
+            return CompletableFuture.completedFuture(code);
+        }
+
         Configuration configuration = new Configuration();
         StringBuilder corpusBuilder = new StringBuilder();
         StringBuilder keyWordsBuilder = new StringBuilder();
         Random random = new Random();
 
         int length;
-        int articleCount = analyzedTexts.size();
+        int articleCount = completedAnalyzedTexts.size();
         int randomTitleNumber = random.nextInt(articleCount);
         int i = 0;
 
@@ -95,12 +118,12 @@ public class TextSynthesis {
         String[] keywords;
         String[] titles = new String[articleCount];
 
-        for (JsonValue articleJson : analyzedTexts) {
+        for (JsonValue articleJson : completedAnalyzedTexts) {
             JsonObject article = articleJson.asJsonObject();
             JsonArray content = article.getJsonArray("content");
             JsonArray tags = article.getJsonArray("tags");
             String title = article.getString("title");
-            titles[i++] = title.replaceAll("[\\\"?<>*:/|]", "");
+            titles[i++] = title.replaceAll("[\"?<>*:/|]", "");
 
             for (JsonValue paragraph : content) {
                 String paragraphAsString = paragraph.toString();
@@ -123,23 +146,34 @@ public class TextSynthesis {
         try {
             length = configuration.getTextConfigurations().getInt("max");
         } catch (IOException e) {
-            return null;
+            return CompletableFuture.completedFuture(null);
         }
 
         MarkovChain markovChain = new MarkovChain(corpus, 3, length, keywords);
         String[] result = {titles[randomTitleNumber], markovChain.markovify()};
 
-        return result;
+        return CompletableFuture.completedFuture(result);
     }
 
     /**
      * Saves an article as a text-file to a newly created directory in the softwares root directory.
      *
-     * @param headline Articles title
-     * @param article Articles content
+     * @param content String[] containing the articles headline and content
      * @return String representing the path to the articles directory
      */
-    public String save(String headline, String article) {
+    private CompletableFuture<String> save(CompletableFuture<String[]> content) {
+        String headline, article;
+
+        try {
+            headline = content.get()[0];
+            article = content.get()[1];
+        } catch(InterruptedException | ExecutionException ee) {
+            return CompletableFuture.completedFuture("");
+        }
+
+        if(headline.equals(StatusCodes.FAILED_ON_ANALYSED_TEXTS.getCode()))
+            return CompletableFuture.completedFuture(StatusCodes.FAILED_ON_ANALYSED_TEXTS.getCode());
+
         File finalDirectory = new File(headline);
         finalDirectory.mkdir();
 
@@ -152,7 +186,7 @@ public class TextSynthesis {
             ioe.printStackTrace();
         }
 
-        return finalDirectory.getAbsolutePath();
+        return CompletableFuture.completedFuture(finalDirectory.getAbsolutePath());
     }
 
 
