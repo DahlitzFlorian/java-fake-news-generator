@@ -1,19 +1,11 @@
 package TextAllocation;
 
-import javax.json.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * Class-based representation of the text allocation component
@@ -21,32 +13,6 @@ import java.util.stream.Collectors;
  * @author Dahlitz
  */
 public class TextAllocation {
-
-    public static void main(String[] args) {
-        long startTime = System.nanoTime();
-        methodToTime();
-        long endTime = System.nanoTime();
-
-        long duration = (endTime - startTime);
-        return;
-    }
-
-    public static void methodToTime() {
-        TextAllocation textAllocation = new TextAllocation();
-        String[] keywords = {"politik", "usa"};
-        List<String> sources = new ArrayList<>();
-        sources.add("http://spiegel.de");
-        sources.add("https://bild.de");
-        sources.add("https://www.tagesschau.de/");
-        sources.add("https://www.welt.de/");
-        sources.add("https://www.faz.net/aktuell/");
-        sources.add("https://www.sueddeutsche.de/");
-        sources.add("https://de.sputniknews.com/");
-        sources.add("https://www.zeit.de/index");
-        JsonArray jsonArray = textAllocation.getTexts(keywords, sources);
-
-        return;
-    }
 
     /**
      * Looks for available feeds and uses them to find articles containing the specified keywords

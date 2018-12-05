@@ -10,8 +10,6 @@ import java.io.OutputStream;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import TextSynthesis.TextSynthesis;
 import org.jsoup.Jsoup;
