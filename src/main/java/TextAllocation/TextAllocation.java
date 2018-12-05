@@ -7,8 +7,12 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -17,6 +21,32 @@ import java.util.stream.Collectors;
  * @author Dahlitz
  */
 public class TextAllocation {
+
+    public static void main(String[] args) {
+        long startTime = System.nanoTime();
+        methodToTime();
+        long endTime = System.nanoTime();
+
+        long duration = (endTime - startTime);
+        return;
+    }
+
+    public static void methodToTime() {
+        TextAllocation textAllocation = new TextAllocation();
+        String[] keywords = {"politik", "usa"};
+        List<String> sources = new ArrayList<>();
+        sources.add("http://spiegel.de");
+        sources.add("https://bild.de");
+        sources.add("https://www.tagesschau.de/");
+        sources.add("https://www.welt.de/");
+        sources.add("https://www.faz.net/aktuell/");
+        sources.add("https://www.sueddeutsche.de/");
+        sources.add("https://de.sputniknews.com/");
+        sources.add("https://www.zeit.de/index");
+        JsonArray jsonArray = textAllocation.getTexts(keywords, sources);
+
+        return;
+    }
 
     /**
      * Looks for available feeds and uses them to find articles containing the specified keywords
@@ -30,69 +60,17 @@ public class TextAllocation {
     public JsonArray getTexts(String[] keywords, List<String> sources) {
         JsonArrayBuilder texts = Json.createArrayBuilder();
 
-        CompletableFuture.allOf(sources.stream()
-                .map(source -> this.getPartsOfTexts(source, keywords, texts)).toArray(CompletableFuture[]::new));
+        ExecutorService executorService = Executors.newCachedThreadPool();
+
+        for(String source : sources)
+            executorService.execute(new TextAllocationThread(source, keywords, texts));
+
+        executorService.shutdown();
+
+        while(!executorService.isTerminated()) {
+
+        }
 
         return texts.build();
-    }
-
-    /**
-     * Represents a subroutine, which is been called asynchronous by the getTexts() method.
-     *
-     * @param source Source for articles
-     * @param keywords Keywords to search for
-     * @param texts Reference to the final articles array
-     * @return Void to check for completion
-     */
-    private CompletableFuture<Void> getPartsOfTexts(String source, String[] keywords, JsonArrayBuilder texts) {
-        source = source.replaceAll("\"", "");
-        List<String> feedUrls = this.getFeedUrls(source);
-
-        if(feedUrls.size() != 0) {
-            FeedParser feedParser = new FeedParser();
-
-            for(String feedUrl : feedUrls) {
-                for (JsonValue value : feedParser.getTexts(feedUrl, keywords)) {
-                    JsonObject text = (JsonObject) value;
-                    texts.add(text);
-                }
-            }
-        }
-        else {
-            Spider spider = new Spider();
-            for(JsonValue value : spider.search(source, keywords)) {
-                JsonObject text = (JsonObject) value;
-                texts.add(text);
-            }
-        }
-
-        return CompletableFuture.completedFuture(null);
-    }
-
-    /**
-     * Takes an url and searches for available feeds and returns them.
-     *
-     * @param source Source to search for available feeds
-     * @return List<String> of available feeds
-     */
-    private List<String> getFeedUrls(String source) {
-        List<String> feedUrls = new ArrayList<>();
-        try {
-            URL url = new URL(source);
-            URLConnection conn = url.openConnection();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                if(line.contains("<link rel=\"alternate\"") && line.contains("type=\"application/rss+xml\"")) {
-                    feedUrls.add(line.split("href=")[1].split("\"")[1]);
-                }
-            }
-
-            return feedUrls;
-        } catch (IOException ioe) {
-            return feedUrls;
-        }
     }
 }
