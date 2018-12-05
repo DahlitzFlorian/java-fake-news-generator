@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import Utils.Popups;
+import javafx.stage.Stage;
 
 
 import javax.json.Json;
@@ -73,6 +74,8 @@ public class ControllerConfiguration implements Initializable {
         if (configJson != null) {
             try {
                 configuration.saveConfiguration(configJson);
+                Stage stage = (Stage) btnSaveConfig.getScene().getWindow();
+                stage.close();
             } catch (IOException e) {
                 Popups.createPopup(Alert.AlertType.ERROR, e.getMessage(), "Konnte nicht auf Datei zugreifen");
             }

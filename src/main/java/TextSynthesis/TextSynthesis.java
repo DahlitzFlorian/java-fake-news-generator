@@ -12,6 +12,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -84,7 +85,8 @@ public class TextSynthesis {
                     return StatusCodes.FAILED_ON_ANALYSED_TEXTS.getCode();
             }
         } catch (InterruptedException | ExecutionException ee) {
-            System.out.println("Error: " + ee.getMessage());
+            ee.printStackTrace();
+            System.out.println("Error: " + Arrays.toString(ee.getStackTrace()));
             return StatusCodes.FAILED_ON_ARTICLE_GENERATION.getCode();
         }
 
@@ -99,13 +101,12 @@ public class TextSynthesis {
         try {
             completedAnalyzedTexts = analyzedTexts.get();
         } catch(InterruptedException | ExecutionException ee) {
-            System.out.println("Error: " + ee.getMessage());
+            System.out.println("Error: " + Arrays.toString(ee.getStackTrace()));
             String[] code = {StatusCodes.FAILED_ON_ANALYSED_TEXTS.getCode(), ""};
             return CompletableFuture.completedFuture(code);
         }
 
         Configuration configuration = new Configuration();
-        StringBuilder corpusBuilder = new StringBuilder();
         StringBuilder keyWordsBuilder = new StringBuilder();
         Random random = new Random();
 
@@ -114,23 +115,16 @@ public class TextSynthesis {
         int randomTitleNumber = random.nextInt(articleCount);
         int i = 0;
 
-        String corpus;
+        String corpus = "";
         String[] keywords;
         String[] titles = new String[articleCount];
 
         for (JsonValue articleJson : completedAnalyzedTexts) {
             JsonObject article = articleJson.asJsonObject();
-            JsonArray content = article.getJsonArray("content");
+            corpus = article.getString("content");
             JsonArray tags = article.getJsonArray("tags");
             String title = article.getString("title");
             titles[i++] = title.replaceAll("[\"?<>*:/|]", "");
-
-            for (JsonValue paragraph : content) {
-                String paragraphAsString = paragraph.toString();
-                paragraphAsString = paragraphAsString.substring(1,paragraphAsString.length()-1);
-                corpusBuilder.append(paragraphAsString);
-                corpusBuilder.append(" ");
-            }
 
             for (JsonValue tag : tags) {
                 String tagAsString = tag.toString();
@@ -139,8 +133,6 @@ public class TextSynthesis {
                 keyWordsBuilder.append(",");
             }
         }
-
-        corpus = corpusBuilder.toString();
         keywords = keyWordsBuilder.toString().split(",");
 
         try {
@@ -149,7 +141,7 @@ public class TextSynthesis {
             return CompletableFuture.completedFuture(null);
         }
 
-        MarkovChain markovChain = new MarkovChain(corpus, 3, length, keywords);
+        MarkovChain markovChain = new MarkovChain(corpus, 2, length, keywords);
         String[] result = {titles[randomTitleNumber], markovChain.markovify()};
 
         return CompletableFuture.completedFuture(result);

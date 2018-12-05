@@ -38,13 +38,12 @@ class MarkovChain {
         //TODO generate length based on user's input
         for (int i = 0; i < length; i++) {
             Map<String, Integer> possibilities = nGrams.get(currentGram);
-            Map<String, Integer> backup = new HashMap<>(possibilities);
 
-            if (possibilities.isEmpty()) {
-                //TODO choose new starting gram when reaching null
+            if (possibilities == null) {
                 System.err.println("null");
                 return result.toString();
             }
+            Map<String, Integer> backup = new HashMap<>(possibilities);
             possibilities.replaceAll((k, v) -> {
                 for(String keyword: keywords) {
                     if(k.toLowerCase().contains(keyword.toLowerCase())) { v+=2; }

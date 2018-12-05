@@ -26,17 +26,10 @@ public class TextClassification {
         }
 
         for (JsonValue articleJson : unanalysedTexts) {
-            JsonArray content = articleJson.asJsonObject().getJsonArray("content");
+            String content = articleJson.asJsonObject().getString("content");
             JsonObjectBuilder analyzedArticle = Json.createObjectBuilder(articleJson.asJsonObject());
-            StringBuilder stringBuilder = new StringBuilder();
-            for (JsonValue paragraph : content) {
-                String paragraphAsString = paragraph.toString();
-                paragraphAsString = paragraphAsString.substring(1,paragraphAsString.length()-1);
-                stringBuilder.append(paragraphAsString);
-                stringBuilder.append(" ");
-            }
 
-            String[] words = textAnalyzer.splitWords(stringBuilder.toString(), true);
+            String[] words = textAnalyzer.splitWords(content, true);
             tfidfTexts.add(0, textAnalyzer.wordOccurrence(words));
             Map<String, Double> tagsMap = textAnalyzer.TFIDF(tfidfTexts).entrySet().stream()
                     .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
