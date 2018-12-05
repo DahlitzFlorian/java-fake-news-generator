@@ -10,13 +10,12 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class TextClassification {
     private static final int TAGS_COUNT = 5;
 
-    public CompletableFuture<JsonArray> getAnalysedTexts(JsonArray unanalysedTexts) {
+    public JsonArray getAnalysedTexts(JsonArray unanalysedTexts) {
         JsonArrayBuilder analyzedJson = Json.createArrayBuilder();
         TextAnalyzer textAnalyzer = new TextAnalyzer();
         List<String> trainingTexts = textAnalyzer.getTFIDFFillerTexts();
@@ -45,7 +44,7 @@ public class TextClassification {
             analyzedArticle.add("tags", tags);
             analyzedJson.add(analyzedArticle);
         }
-        return CompletableFuture.completedFuture(analyzedJson.build());
+        return analyzedJson.build();
     }
 
 

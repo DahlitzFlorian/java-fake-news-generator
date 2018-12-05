@@ -31,26 +31,18 @@ public class ImageAllocation extends ArrayList<Element> {
     /**
      * Downloads an image and saves it to the articles directory.
      *
-     * @param path Path to the articles directory
+     * @param pathToArticle Path to the articles directory
      * @param keywords Keywords an image is classified as
      */
-	public CompletableFuture<String> getImage(CompletableFuture<String> path, String[] keywords) {
+	public String getImage(String pathToArticle, String[] keywords) {
 		int counter;
         URL imageUrl;
-        String pathToArticle;
-
-        try {
-            pathToArticle = path.get();
-        } catch(InterruptedException | ExecutionException ee) {
-            System.out.println("Error: " + ee.getMessage());
-            return CompletableFuture.completedFuture(TextSynthesis.StatusCodes.FAILED_ON_ARTICLE_PATH.getCode());
-        }
 
         try {
             imageUrl = new URL(this.searchImage(String.join(" ", keywords)));
         } catch(IOException ioe) {
             System.out.println("Error: " + ioe.getMessage());
-            return CompletableFuture.completedFuture(TextSynthesis.StatusCodes.FAILED_ON_IMAGE_URL.getCode());
+            return TextSynthesis.StatusCodes.FAILED_ON_IMAGE_URL.getCode();
         }
 
 		try (InputStream imageReaderInput = new BufferedInputStream(imageUrl.openStream());
@@ -62,10 +54,10 @@ public class ImageAllocation extends ArrayList<Element> {
 			}
 		} catch(IOException ioe) {
 		    System.out.println("Error: " + ioe.getMessage());
-            return CompletableFuture.completedFuture(TextSynthesis.StatusCodes.FAILED_ON_IMAGE_ALLOCATION.getCode());
+            return TextSynthesis.StatusCodes.FAILED_ON_IMAGE_ALLOCATION.getCode();
         }
 
-        return CompletableFuture.completedFuture("");
+        return "";
 	}
 
     /**
