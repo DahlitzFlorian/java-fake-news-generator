@@ -1,5 +1,6 @@
 package TextSynthesis;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ class MarkovChain {
     private String[] words;
     private String[] keywords;
     private Map<String, Map<String, Integer>> nGrams = new HashMap<>();
+    Random rnd = new Random();
 
     MarkovChain(String corpus, int order, int length, String[] keywords) {
         this.order = order;
@@ -36,12 +38,13 @@ class MarkovChain {
         result.append(currentGram);
 
         //TODO generate length based on user's input
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < (int) length/order; i++) {
             Map<String, Integer> possibilities = nGrams.get(currentGram);
 
             if (possibilities == null) {
-                System.err.println("null");
-                return result.toString();
+                List<String> startingGrams = generateStartingNGrams();
+                int rndGram = rnd.nextInt(startingGrams.size());
+                possibilities = nGrams.get(startingGrams.get(rndGram));
             }
             Map<String, Integer> backup = new HashMap<>(possibilities);
             possibilities.replaceAll((k, v) -> {
@@ -61,7 +64,6 @@ class MarkovChain {
     }
 
     private String getRandomNextEntry(Map<String, Integer> probabilities) {
-        Random rnd = new Random();
         int totalSum = 0;
         Set<String> keySet = probabilities.keySet();
         for (String key : keySet) {
@@ -114,7 +116,13 @@ class MarkovChain {
 
     //TODO implement this
     private List<String> generateStartingNGrams() {
-        return null;
+        List<String> startingGrams = new ArrayList<>();
+        for (String key: nGrams.keySet()) {
+            if (key.endsWith(".")) {
+                startingGrams.add(key);
+            }
+        }
+        return startingGrams;
     }
 
 }
