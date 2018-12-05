@@ -11,18 +11,32 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Helper class which is called to fetch articles in parallel
+ *
+ * @author Dahlitz
+ */
 public class TextAllocationThread implements Runnable {
 
     private JsonArrayBuilder texts;
     private String source;
     private String[] keywords;
 
+    /**
+     *
+     * @param source Source articles are fetched from
+     * @param keywords Keywords searched for
+     * @param texts Reference to the final texts object
+     */
     TextAllocationThread(String source, String[] keywords, JsonArrayBuilder texts) {
         this.texts = texts;
         this.source = source;
         this.keywords = keywords;
     }
 
+    /**
+     * Required by the Runnable interface and used to run the tasks in parallel.
+     */
     public void run() {
         this.source = this.source.replaceAll("\"", "");
         List<String> feedUrls = this.getFeedUrls();

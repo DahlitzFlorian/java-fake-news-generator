@@ -81,8 +81,13 @@ public class TextSynthesis {
             return status;
     }
 
+    /**
+     * Handling the control flow for synthesising a new article.
+     *
+     * @param analyzedTexts Texts on which basis the new article is synthesised
+     * @return String[] representing [0] headline and [1] content
+     */
     private String[] synthesise(JsonArray analyzedTexts) {
-
         Configuration configuration = new Configuration();
         StringBuilder keyWordsBuilder = new StringBuilder();
         Random random = new Random();
