@@ -91,23 +91,11 @@ class FeedParser implements FeedParserInterface {
     private JsonObject articleBuilder(String resource, String title, String content) {
         JsonObjectBuilder article = Json.createObjectBuilder();
         JsonArrayBuilder  tags = Json.createArrayBuilder();
-        JsonArrayBuilder paragraphs = Json.createArrayBuilder();
-
-        final Pattern TAG_REGEX = Pattern.compile("<p>(.+?)</p>", Pattern.DOTALL);
-
-        final List<String> tagValues = new ArrayList<>();
-        final Matcher matcher = TAG_REGEX.matcher(content);
-        while (matcher.find()) {
-            tagValues.add(matcher.group(1));
-        }
-
-        for(String paragraph : tagValues)
-            paragraphs.add(paragraph.replaceAll("\\<.*?>",""));
 
         article.add("resource", resource);
         article.add("title", title);
         article.add("tags", tags.build());
-        article.add( "content", paragraphs.build());
+        article.add( "content", content.replaceAll("\\<.*?>",""));
 
         return article.build();
     }
