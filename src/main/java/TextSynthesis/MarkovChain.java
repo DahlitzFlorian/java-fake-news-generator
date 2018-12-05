@@ -20,7 +20,7 @@ class MarkovChain {
     private String[] words;
     private String[] keywords;
     private Map<String, Map<String, Integer>> nGrams = new HashMap<>();
-    Random rnd = new Random();
+    private Random rnd = new Random();
 
     MarkovChain(String corpus, int order, int length, String[] keywords) {
         this.order = order;
