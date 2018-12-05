@@ -49,27 +49,28 @@ public class Spider {
     public JsonArray search(String baseUrl, String[] keywords) {
 
         JsonArrayBuilder articles = Json.createArrayBuilder();
+        return Json.createArrayBuilder().build();
 
-        while(this.pagesVisited.size() < MAX_PAGES) {
-            String currentUrl;
-            Crawler crawler = new Crawler();
+//       while(this.pagesVisited.size() < MAX_PAGES) {
+//            String currentUrl;
+//            Crawler crawler = new Crawler();
+//
+//            if(this.pagesToVisit.isEmpty()) {
+//                currentUrl = baseUrl;
+//                this.pagesVisited.add(baseUrl);
+//            }
+//            else {
+//                currentUrl = this.getNextUrl();
+//            }
+//
+//            crawler.crawl(currentUrl);
+//            boolean success = crawler.searchForWord(keywords);
+//
+//            this.pagesToVisit.addAll(crawler.getLinks());
+//        }
 
-            if(this.pagesToVisit.isEmpty()) {
-                currentUrl = baseUrl;
-                this.pagesVisited.add(baseUrl);
-            }
-            else {
-                currentUrl = this.getNextUrl();
-            }
+//        System.out.println(String.format("**Done** Visited %s web page(s)", this.pagesVisited.size()));
 
-            crawler.crawl(currentUrl);
-            boolean success = crawler.searchForWord(keywords);
 
-            this.pagesToVisit.addAll(crawler.getLinks());
-        }
-
-        System.out.println(String.format("**Done** Visited %s web page(s)", this.pagesVisited.size()));
-
-        return articles.build();
     }
 }
