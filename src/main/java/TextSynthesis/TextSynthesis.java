@@ -12,6 +12,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 
@@ -141,10 +142,11 @@ public class TextSynthesis {
         if(headline.equals(StatusCodes.FAILED_ON_ANALYSED_TEXTS.getCode()))
             return StatusCodes.FAILED_ON_ANALYSED_TEXTS.getCode();
 
-        File finalDirectory = new File(headline);
+        String directory = headline + LocalDateTime.now();
+        File finalDirectory = new File(directory);
         finalDirectory.mkdir();
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(headline + "/" + headline + ".txt"))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(directory + "/" + headline + ".txt"))) {
             writer.write(headline);
             writer.newLine();
             writer.newLine();
@@ -155,6 +157,4 @@ public class TextSynthesis {
 
         return finalDirectory.getAbsolutePath();
     }
-
-
 }
