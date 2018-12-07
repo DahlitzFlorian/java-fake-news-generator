@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
 
-
-<AnchorPane fx:controller="Gui.ControllerMainWindow" prefHeight="151.0" prefWidth="605.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="151.0" prefWidth="605.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Gui.ControllerMainWindow">
     <children>
         <Button fx:id="btnGenerateArticle" layoutX="106.0" layoutY="91.0" mnemonicParsing="false" onAction="#generateArticle" prefHeight="31.0" prefWidth="236.0" text="Artikel generieren" />
         <Button fx:id="btnOpenConfig" layoutX="354.0" layoutY="91.0" mnemonicParsing="false" onAction="#openConfig" prefHeight="31.0" prefWidth="236.0" text="Konfiguration ändern" />
         <Label layoutX="26.0" layoutY="46.0" text="Keywords" />
-        <TextField fx:id="txtFieldKeywords" layoutX="106.0" layoutY="41.0" prefHeight="31.0" prefWidth="484.0" />
+        <TextField fx:id="txtFieldKeywords" promptText="Bitte kommasepariert eingeben!" layoutX="106.0" layoutY="41.0" prefHeight="31.0" prefWidth="484.0" />
+      <CheckBox fx:id="chkBoxImage" layoutX="26.0" layoutY="98.0" mnemonicParsing="false" text="Bild" />
     </children>
 </AnchorPane>

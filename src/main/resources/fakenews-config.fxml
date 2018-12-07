@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import Gui.RestrictedTextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
 
-
-<AnchorPane fx:controller="Gui.ControllerConfiguration" prefHeight="293.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="293.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Gui.ControllerConfiguration">
     <children>
         <Label layoutX="14.0" layoutY="71.0" text="Nachrichtenquellen" />
         <Label layoutX="15.0" layoutY="152.0" text="Max. Wörter" />
         <Label layoutX="14.0" layoutY="189.0" text="Min. Wörter" />
         <Button fx:id="btnSaveConfig" layoutX="166.0" layoutY="234.0" mnemonicParsing="false" onAction="#saveConfig" prefHeight="31.0" prefWidth="415.0" text="Speichern" />
-        <TextArea fx:id="txtAreaNewsSources" layoutX="166.0" layoutY="24.0" prefHeight="116.0" prefWidth="415.0" promptText="Bitte Nachrichtenquellen kommasepariert eingeben!" />
+        <TextArea fx:id="txtAreaNewsSources" layoutX="166.0" layoutY="24.0" prefHeight="116.0" prefWidth="415.0" promptText="Bitte Nachrichtenquellen kommasepariert eingeben!                                 Format: http(s)://www.quelle.de" />
         <RestrictedTextField fx:id="txtFieldMaxWordCount" layoutX="166.0" layoutY="147.0" prefHeight="31.0" prefWidth="415.0" />
         <RestrictedTextField fx:id="txtFieldMinWordCount" layoutX="166.0" layoutY="184.0" prefHeight="31.0" prefWidth="415.0" />
     </children>
