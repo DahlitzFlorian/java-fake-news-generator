@@ -62,7 +62,6 @@ public class ControllerConfiguration implements Initializable {
                     "Keine Konfiguration vorhanden");
             log.info(e.getMessage());
         }
-
     }
 
     /**
@@ -82,7 +81,6 @@ public class ControllerConfiguration implements Initializable {
         } else {
             log.info("Eingaben fehlerhaft -> konnte nicht gespeichert werden");
         }
-
     }
 
     private JsonObject generateJson() {

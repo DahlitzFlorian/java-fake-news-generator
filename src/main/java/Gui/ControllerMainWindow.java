@@ -5,18 +5,16 @@ import Utils.Popups;
 import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.LoadException;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -39,6 +37,9 @@ public class ControllerMainWindow {
     @FXML
     public TextField txtFieldKeywords;
 
+    @FXML
+    public CheckBox chkBoxImage;
+
     private TextSynthesis textSynthesis = new TextSynthesis();
 
     private GuiParser parser = new GuiParser();
@@ -47,8 +48,9 @@ public class ControllerMainWindow {
     public void generateArticle() {
         txtFieldKeywords.pseudoClassStateChanged(errorClass, false);
         String[] keywords = getKeywords();
+        boolean image = chkBoxImage.isSelected();
         if(keywords != null) {
-            Popups.createPopup(Alert.AlertType.INFORMATION, textSynthesis.createArticle(keywords), "Information");
+            Popups.createPopup(Alert.AlertType.INFORMATION, textSynthesis.createArticle(keywords, image), "Information");
         } else {
             txtFieldKeywords.pseudoClassStateChanged(errorClass, true);
             Popups.createPopup(Alert.AlertType.ERROR, parser.getNotifications().getErrors().get(txtFieldKeywords), "Ungültige Eingabe");
