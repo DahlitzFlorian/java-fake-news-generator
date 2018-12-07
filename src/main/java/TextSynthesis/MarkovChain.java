@@ -10,11 +10,9 @@ import java.util.Set;
 
 import static java.util.Arrays.copyOfRange;
 
-
-//TODO make this more efficient
-//TODO implement function generating starting grams (having texts start with different words)
-//TODO add context free grammar(maybe) -> text makes more sense
 class MarkovChain {
+    private final static int EXTRA_WEIGTH = 3;
+
     private int order;
     private int length;
     private String[] words;
@@ -24,7 +22,6 @@ class MarkovChain {
 
     MarkovChain(String corpus, int order, int length, String[] keywords) {
         this.order = order;
-        //TODO let quotes stay intact
         this.words = corpus.split("\\s");
         this.length = length;
         this.keywords = keywords;
@@ -33,32 +30,38 @@ class MarkovChain {
     String markovify() {
         generateNGrams();
         //Choose starting gram, for now choose the first word sequence
-        String currentGram = arrayToString(copyOfRange(words, 0, order));
+        String currentGram = getRandomStartingNGram();
         StringBuilder result = new StringBuilder();
         result.append(currentGram);
 
-        //TODO generate length based on user's input
         for (int i = 0; i < (int) length/order; i++) {
             Map<String, Integer> possibilities = nGrams.get(currentGram);
 
             if (possibilities == null) {
-                List<String> startingGrams = generateStartingNGrams();
-                int rndGram = rnd.nextInt(startingGrams.size());
-                possibilities = nGrams.get(startingGrams.get(rndGram));
+                possibilities = nGrams.get(getRandomStartingNGram());
+                result.append("\n\n");
             }
             Map<String, Integer> backup = new HashMap<>(possibilities);
             possibilities.replaceAll((k, v) -> {
                 for(String keyword: keywords) {
-                    if(k.toLowerCase().contains(keyword.toLowerCase())) { v+=2; }
+                    if(k.toLowerCase().contains(keyword.toLowerCase())) { v+=EXTRA_WEIGTH; }
                 }
                 return v;
             });
+
             String next = getRandomNextEntry(possibilities);
+            while(next == null) {
+                next = getRandomNextEntry(possibilities);
+            }
             //restore old values
             possibilities.putAll(backup);
             currentGram = next;
             result.append(" ");
             result.append(next);
+            //some simple formatting
+            if(i%100 == 0) result.append("\n\n");
+            else if(i%10 == 0) result.append("\n");
+
         }
         return result.toString();
     }
@@ -118,11 +121,14 @@ class MarkovChain {
     private List<String> generateStartingNGrams() {
         List<String> startingGrams = new ArrayList<>();
         for (String key: nGrams.keySet()) {
-            if (key.endsWith(".")) {
-                startingGrams.add(key);
-            }
+            if(key.matches("^[A-Z](.*)")) startingGrams.add(key);
         }
         return startingGrams;
     }
 
+    private String getRandomStartingNGram() {
+        List<String> startingGrams = generateStartingNGrams();
+        int rndGram = rnd.nextInt(startingGrams.size());
+        return startingGrams.get(rndGram);
+    }
 }
