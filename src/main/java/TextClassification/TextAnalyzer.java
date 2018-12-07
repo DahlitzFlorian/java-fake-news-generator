@@ -4,12 +4,12 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.json.JsonArray;
 import javax.json.Json;
-
 import javax.json.JsonReader;
 
 /**
@@ -107,7 +107,7 @@ class TextAnalyzer implements Analyzer {
     private Map<String, Integer> searchNominal(JsonArray article) {
         Map<String, Integer> nominalCounter = new HashMap<>();
         int tempNumber;
-        String[] news = article.toString().split("\\s"); //TODO get real resources
+        String[] news = article.toString().split("\\s");
         for (String word : news) {
             if (word.matches("^[A-Z](.*)") && nominalCounter.containsKey(word)) {
                 tempNumber = nominalCounter.get(word) + 1;
@@ -217,42 +217,15 @@ class TextAnalyzer implements Analyzer {
      * @author Fichte
      * Method to get filler article out of the TFIDF_Training Text directory. This directory contains several textfiles with filler material.
      */
-    List<String> getTFIDFFillerTexts() {
-        Scanner x;
-        ArrayList<String> fillerTexts = new ArrayList<>();
-        ArrayList<Integer> noDuplicates = new ArrayList<>();
-        Random textIndex = new Random();
-        ArrayList<String> tempText = new ArrayList<>();
-        int tempTextSize = 0;
-        int randomNumber;
-        for (int i = 0; i < 10; i++) {
-            randomNumber = textIndex.nextInt(44);
-            if (!noDuplicates.contains(randomNumber)) {
-                String textName = "text" + randomNumber + ".txt";
-                try {
-
-                    x = new Scanner(getClass().getClassLoader().getResourceAsStream("./training_texts/" + textName));
-
-                } catch (Exception e) {
-                    return null;
-                }
-                while (x.hasNext() && tempTextSize != 1000) {
-
-                    tempText.add(x.next());
-                    tempTextSize ++;
-
-                }
-                String fillerText = tempText.subList(0, tempTextSize).toString();
-                tempText.clear();
-                fillerText = fillerText.replaceAll(",", "");
-                fillerTexts.add(fillerText);
-                noDuplicates.add(randomNumber);
-                tempTextSize = 0;
-                x.close();
+    String getTFIDFFillerTexts() {
+        String fillerTexts = "";
+        try {
+            InputStream input = getClass().getClassLoader().getResourceAsStream("training_texts.txt");
+            try (BufferedReader buffer = new BufferedReader(new InputStreamReader(input))) {
+                fillerTexts = buffer.lines().collect(Collectors.joining("\n"));
             }
-            else{
-                i--;
-            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
         return fillerTexts;
     }

@@ -18,11 +18,12 @@ public class TextClassification {
     public JsonArray getAnalysedTexts(JsonArray unanalysedTexts) {
         JsonArrayBuilder analyzedJson = Json.createArrayBuilder();
         TextAnalyzer textAnalyzer = new TextAnalyzer();
-        List<String> trainingTexts = textAnalyzer.getTFIDFFillerTexts();
+        String trainingText = textAnalyzer.getTFIDFFillerTexts();
         List<Map<String, Integer>> tfidfTexts = new ArrayList<>();
-        for(String trainingText: trainingTexts) {
-            tfidfTexts.add(textAnalyzer.wordOccurrence(textAnalyzer.splitWords(trainingText, true)));
-        }
+
+
+        tfidfTexts.add(textAnalyzer.wordOccurrence(textAnalyzer.splitWords(trainingText, true)));
+
 
         for (JsonValue articleJson : unanalysedTexts) {
             String content = articleJson.asJsonObject().getString("content");
