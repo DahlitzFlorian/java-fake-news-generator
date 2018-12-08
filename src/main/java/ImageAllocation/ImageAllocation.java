@@ -45,7 +45,7 @@ public class ImageAllocation extends ArrayList<Element> {
 
 		try (InputStream imageReaderInput = new BufferedInputStream(imageUrl.openStream());
              OutputStream imageWriterOutput = new BufferedOutputStream(
-                     new FileOutputStream(pathToArticle + File.separator + "image.jpg"))) {
+                     new FileOutputStream(pathToArticle + File.separator + "image.png"))) {
 
 			while ((counter = imageReaderInput.read()) != -1) {
 				imageWriterOutput.write(counter);
