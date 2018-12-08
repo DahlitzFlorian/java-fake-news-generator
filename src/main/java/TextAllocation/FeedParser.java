@@ -35,7 +35,7 @@ class FeedParser implements FeedParserInterface {
      */
     public JsonArray getTexts(String source, String[] keywords) {
         final String fullFeed = "https://www.freefullrss.com/feed.php?url=";
-        final String fullFeedOptions = "&max=30&links=preserve&exc=&submit=Create+Full+Text+RSS";
+        final String fullFeedOptions = "&max=50&links=preserve&exc=&submit=Create+Full+Text+RSS";
 
         source = fullFeed + source + fullFeedOptions;
 
