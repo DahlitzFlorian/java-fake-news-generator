@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -29,13 +30,19 @@ class GuiParser {
     }
 
     List<String> parseTextArea(TextArea textArea) {
-        String input = textArea.getText().replaceAll("\\s", "");
+        String input = textArea.getText();
 
         if (input.isEmpty()) {
             notifications.addError(textArea, "Das Eingabefeld Quellen muss ausgefüllt werden!\n");
         }
 
-        return new ArrayList<>(Arrays.asList(input.split(",")));
+        List<String> sources = new ArrayList<>();
+
+        Arrays.stream(input.split(",")).forEach(source -> {
+            sources.addAll(Arrays.asList(source.trim().split("\\n")));
+        });
+
+        return sources;
     }
 
     Notifications getNotifications() {
