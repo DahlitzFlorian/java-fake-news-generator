@@ -78,7 +78,14 @@ public class TextAllocationThread implements Runnable {
 
             while ((line = br.readLine()) != null) {
                 if(line.contains("<link rel=\"alternate\"") && line.contains("type=\"application/rss+xml\"")) {
-                    feedUrls.add(line.split("href=")[1].split("\"")[1]);
+                    String possibleUrl = line.split("href=")[1].split("\"")[1];
+
+                    if(possibleUrl.contains("http"))
+                        feedUrls.add(possibleUrl);
+                    else {
+                        String[] splittedSource = this.source.split("/");
+                        feedUrls.add(splittedSource[0] + "//" + splittedSource[2] + possibleUrl);
+                    }
                 }
             }
 

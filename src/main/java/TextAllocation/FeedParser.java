@@ -37,7 +37,7 @@ class FeedParser implements FeedParserInterface {
         final String fullFeed = "https://www.freefullrss.com/feed.php?url=";
         final String fullFeedOptions = "&max=50&links=preserve&exc=&submit=Create+Full+Text+RSS";
 
-        source = fullFeed + source + fullFeedOptions;
+        final String fullFeedSource = fullFeed + source + fullFeedOptions;
 
         JsonArrayBuilder articles = Json.createArrayBuilder();
 
@@ -45,7 +45,7 @@ class FeedParser implements FeedParserInterface {
         String headline;
 
         try {
-            URL feedUrl = new URL(source);
+            URL feedUrl = new URL(fullFeedSource);
             SyndFeedInput feedInput = new SyndFeedInput();
             SyndFeed newsFeed = feedInput.build(new XmlReader(feedUrl));
 
@@ -72,7 +72,7 @@ class FeedParser implements FeedParserInterface {
                     articles.add(this.articleBuilder(feedEntry.getLink(), headline, news));
             }
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
+            System.err.println("Error: Non-supported feed url: " + source);
         }
 
         return articles.build();
