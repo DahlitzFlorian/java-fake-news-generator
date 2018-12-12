@@ -80,7 +80,6 @@ public class ImageAllocation extends ArrayList<Element> {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-
 		return imageUrl;
 	}
 

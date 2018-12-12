@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * @author Leuschner
+ */
 public class TextClassification {
     private static final int TAGS_COUNT = 5;
 

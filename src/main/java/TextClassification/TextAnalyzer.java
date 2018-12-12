@@ -213,8 +213,9 @@ class TextAnalyzer implements Analyzer {
 	}
 
     /**
-     * @return a ArrayList containing several filler texts.
+     * @return a String containing several filler texts.
      * @author Fichte
+     * @reviewed Leuschner
      * Method to get filler article out of the TFIDF_Training Text directory. This directory contains several textfiles with filler material.
      */
     String getTFIDFFillerTexts() {

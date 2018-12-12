@@ -10,6 +10,10 @@ import java.util.Set;
 
 import static java.util.Arrays.copyOfRange;
 
+/**
+ * @author Leuschner
+ */
+
 class MarkovChain {
     private final static int EXTRA_WEIGTH = 3;
 
@@ -29,12 +33,12 @@ class MarkovChain {
 
     String markovify() {
         generateNGrams();
-        //Choose starting gram, for now choose the first word sequence
+        boolean newline = false;
         String currentGram = getRandomStartingNGram();
         StringBuilder result = new StringBuilder();
         result.append(currentGram);
 
-        for (int i = 0; i < (int) length/order; i++) {
+        for (int i = 0; i < (int) length / order; i++) {
             Map<String, Integer> possibilities = nGrams.get(currentGram);
 
             if (possibilities == null) {
@@ -43,14 +47,16 @@ class MarkovChain {
             }
             Map<String, Integer> backup = new HashMap<>(possibilities);
             possibilities.replaceAll((k, v) -> {
-                for(String keyword: keywords) {
-                    if(k.toLowerCase().contains(keyword.toLowerCase())) { v+=EXTRA_WEIGTH; }
+                for (String keyword : keywords) {
+                    if (k.toLowerCase().contains(keyword.toLowerCase())) {
+                        v += EXTRA_WEIGTH;
+                    }
                 }
                 return v;
             });
 
             String next = getRandomNextEntry(possibilities);
-            while(next == null) {
+            while (next == null) {
                 next = getRandomNextEntry(possibilities);
             }
             //restore old values
@@ -58,12 +64,24 @@ class MarkovChain {
             currentGram = next;
             result.append(" ");
             result.append(next);
-            //some simple formatting
-            if(i%100 == 0) result.append("\n\n");
-            else if(i%10 == 0) result.append("\n");
 
+            //some simple formatting
+            if (i % 50 == 0 && newline && next.endsWith(".")) {
+                result.append("\n\n");
+                newline = false;
+            } else if (i % 50 == 0) newline = true;
+            else if (i % 10 == 0) result.append("\n");
         }
-        return result.toString();
+
+        //Making result text end with punctuation
+        String resultText = result.toString();
+        for(int j = resultText.length()-1; j >=0; j--) {
+            char currentChar = resultText.charAt(j);
+            if (currentChar == '.' || currentChar == '!' || currentChar == '?') {
+                return resultText.substring(0,j+1);
+            }
+        }
+        return resultText;
     }
 
     private String getRandomNextEntry(Map<String, Integer> probabilities) {
@@ -80,10 +98,9 @@ class MarkovChain {
         while (sum < index) {
             sum += probabilities.get(keySetAsString[i++]);
         }
-        return keySetAsString[i-1];
+        return keySetAsString[i - 1];
     }
 
-    //TODO english comments
     private void generateNGrams() {
         int wordCount = words.length;
 
@@ -108,20 +125,18 @@ class MarkovChain {
         }
     }
 
-    //TODO make this work for different orders, only works for order 2. Or implement a better method
     private String arrayToString(String[] array) {
         String temp = Arrays.toString(array).replace("[", "").replace("]", "");
-        for(int i = 1; i < order; i++) {
+        for (int i = 1; i < order; i++) {
             temp = temp.replaceFirst(",", "");
         }
         return temp;
     }
 
-    //TODO implement this
     private List<String> generateStartingNGrams() {
         List<String> startingGrams = new ArrayList<>();
-        for (String key: nGrams.keySet()) {
-            if(key.matches("^[A-Z](.*)")) startingGrams.add(key);
+        for (String key : nGrams.keySet()) {
+            if (key.matches("^[A-Z](.*)")) startingGrams.add(key);
         }
         return startingGrams;
     }
